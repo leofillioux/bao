@@ -5,19 +5,20 @@ from sklearn.model_selection import KFold, StratifiedKFold
 
 def get_dataset_split(dataset_name: str,
                       split: int,
-                      data_dir: str = default_data_dir,
-                      num_splits: int = 4) -> None:
+                      num_splits: int,
+                      data_dir: str = default_data_dir) -> None:
     """
         Get the names of the images in the dataset splits.
         arguments:
             dataset_name [str]: name of the dataset to prepare
             split [int]: index of the split to get
-            data_dir [str]: directory to save the prepared dataset to
             num_splits [int]: number of splits to create
+            data_dir [str]: directory to save the prepared dataset to
         returns:
             None
     """
     assert dataset_name in dataset_config, f'Dataset {dataset_name} not found in dataset_configs.yaml.'
+
     dataset_path = os.path.join(data_dir, f'{dataset_name}.h5')
     dataset_type = dataset_config[dataset_name].task
 

@@ -1,0 +1,9 @@
+seed: 0
+optimizer: Adam
+optimizer_params:
+  lr: 0.00001
+batch_size: 16
+num_workers: 0
+
+max_epochs: 100
+patience: 10
