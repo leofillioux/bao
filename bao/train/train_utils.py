@@ -1,11 +1,55 @@
-def dice_loss(y_hat, y):
+import torch
+from easydict import EasyDict as edict
+
+def dice_loss(y_hat: torch.tensor,
+              y: torch.tensor) -> torch.tensor:
+    """
+        Compute the Dice loss for segmentation.
+        arguments:
+            y_hat [torch.tensor]: predicted mask
+            y [torch.tensor]: ground truth mask
+        returns:
+            dice_loss [torch.tensor]: computed Dice loss
+    """
     y_hat = y_hat.flatten()
     y = y.flatten()
     intersection = (y_hat * y).sum()
-    return 1 - ((2. * intersection) / (y_hat.sum() + y.sum()))
+    dice_loss = 1 - ((2. * intersection) / (y_hat.sum() + y.sum()))
+    return dice_loss
 
-def dice_metric(y_hat, y):
+def dice_metric(y_hat: torch.tensor,
+                y: torch.tensor) -> torch.tensor:
+    """
+        Compute the Dice metric for segmentation.
+        arguments:
+            y_hat [torch.tensor]: predicted mask
+            y [torch.tensor]: ground truth mask
+        returns:
+            dice [torch.tensor]: computed Dice metric
+    """
     y_hat = y_hat.flatten() > 0.5
     y = y.flatten()
     intersection = (y_hat * y).sum()
-    return (2. * intersection) / (y_hat.sum() + y.sum())
+    dice = (2. * intersection) / (y_hat.sum() + y.sum())
+    return dice
+
+def update_easydict_recursive(easydict_obj, kwargs):
+    """
+        Recursively updates values in an EasyDict object with values from kwargs.
+        arguments:
+            easydict_obj [edict]: EasyDict object to update
+            kwargs [dict]: dictionary of key-value pairs to update
+        reuturns:
+            updated_easydict [edict]: updated EasyDict object
+    """
+    for key, value in kwargs.items():
+        if key in easydict_obj:
+            if isinstance(easydict_obj[key], (dict, edict)) and isinstance(value, dict):
+                easydict_obj[key] = update_easydict_recursive(easydict_obj[key], value)
+            else:
+                easydict_obj[key] = value
+        else:
+            for subkey, subvalue in easydict_obj.items():
+                if isinstance(subvalue, (dict, edict)):
+                    easydict_obj[subkey] = update_easydict_recursive(subvalue, kwargs)
+    return easydict_obj

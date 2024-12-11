@@ -5,6 +5,7 @@ from .models import get_model
 from .datasets import get_dataset
 from torch.utils.data import DataLoader
 from ..datasets import get_dataset_split
+from .train_utils import update_easydict_recursive
 from ..configs import train_config, dataset_config, default_data_dir
 from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint
 
@@ -12,17 +13,29 @@ def train(model: torch.nn.Module,
           dataset_name: str,
           split: int,
           data_dir: str = default_data_dir,
-          num_splits: int = 4) -> None:
+          num_splits: int = 4,
+          **kwargs) -> None:
     """
-        TODO
+        Train a model on a specified dataset.
+        arguments:
+            model [torch.nn.Module]: model to train
+            dataset_name [str]: name of the dataset to train on
+            split [int]: index of the split to train on
+            data_dir [str]: directory to save the prepared dataset to
+            num_splits [int]: number of splits to create
+            kwargs: additional arguments to update the training configuration
+        returns:
+            None
     """
-    L.seed_everything(train_config.seed, workers=True)
+
+    update_train_config = update_easydict_recursive(train_config, kwargs)
+    L.seed_everything(update_train_config.seed, workers=True)
 
     assert dataset_name in dataset_config, f'Dataset {dataset_name} not found in dataset_configs.yaml.'
 
     model = get_model(dataset_config[dataset_name].task)(model,
-                                                         train_config.optimizer,
-                                                         train_config.optimizer_params,
+                                                         update_train_config.optimizer,
+                                                         update_train_config.optimizer_params,
                                                          dataset_config[dataset_name].num_classes)
     
     img_size = dataset_config[dataset_name].size
@@ -49,26 +62,26 @@ def train(model: torch.nn.Module,
         
     collate_fn = getattr(model, 'collate_fn', None)
     train_dataloader = DataLoader(train_dataset,
-                                  batch_size=train_config.batch_size,
+                                  batch_size=update_train_config.batch_size,
                                   shuffle=True,
-                                  num_workers=train_config.num_workers,
+                                  num_workers=update_train_config.num_workers,
                                   collate_fn=collate_fn)
     val_dataloader = DataLoader(val_dataset,
-                                batch_size=train_config.batch_size,
+                                batch_size=update_train_config.batch_size,
                                 shuffle=False,
-                                num_workers=train_config.num_workers,
+                                num_workers=update_train_config.num_workers,
                                 collate_fn=collate_fn)
     test_dataloader = DataLoader(test_dataset,
-                                 batch_size=train_config.batch_size,
+                                 batch_size=update_train_config.batch_size,
                                  shuffle=False,
-                                 num_workers=train_config.num_workers,
+                                 num_workers=update_train_config.num_workers,
                                  collate_fn=collate_fn) if test_names is not None else None
     
     early_stopping = EarlyStopping(monitor='val/loss',
-                                   patience=train_config.patience)
+                                   patience=update_train_config.patience)
     model_checkpoint = ModelCheckpoint(monitor='val/loss', mode='min', save_last=False, save_top_k=1)
     callbacks = [early_stopping, model_checkpoint]
-    trainer = L.Trainer(max_epochs=train_config.max_epochs,
+    trainer = L.Trainer(max_epochs=update_train_config.max_epochs,
                         callbacks=callbacks,
                         accelerator='cuda' if torch.cuda.is_available() else 'cpu',
                         devices=1,
