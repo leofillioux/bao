@@ -1,0 +1,37 @@
+tellu:
+  url: https://zenodo.org/records/6768583/files/OrganoidDataset.zip?download=1
+  task: detection
+  size: [1024, 1024]
+  num_classes: 5
+
+orgaquant:
+  url: https://osf.io/y29h7/download
+  task: localization
+  size: [512, 512]
+  num_classes: 1
+
+orgasegment:
+  url: https://zenodo.org/records/10278229/files/OrganoidBasic_v20211206.zip?download=1
+  task: segmentation
+  size: [1024, 1024]
+  num_classes: 1
+
+dcrypto_budding:
+  url: https://osf.io/download/gdycz/
+  task: classification
+  size: [128, 128]
+  num_classes: 2
+
+dcrypto_opaque:
+  url: https://osf.io/download/g9edt/
+  task: classification
+  size: [128, 128]
+  num_classes: 2
+
+orgaextractor:
+  url:
+    - ['https://drive.google.com/uc?id=1u987UNcZxWkEwe5gjLoR3-M0lBNicXQ1', orgaextractor_train.zip]
+    - ['https://drive.google.com/uc?id=1IXqu1MqMZzfw1_GzZauUhg1As_abbk6N', orgaextractor_test.zip]
+  task: segmentation
+  size: [1024, 1024]
+  num_classes: 2
