@@ -250,9 +250,14 @@ def prepare_dcrypto_opaque(in_dir: str,
     prepare_dcrypto(in_dir, out_path, labels, folder_name, img_extension, True)
 
 def prepare_multiorg(in_dir: str,
-                     out_path: str):
+                     out_path: str) -> None:
     """
-        TODO
+        Prepare the MultiOrg dataset for training and testing.
+        arguments:
+            in_dir [str]: path to the directory containing the MultiOrg dataset
+            out_path [str]: path to save the prepared dataset
+        returns:
+            None
     """
     def get_corresponding_json(tiff_path):
         dir_path = os.path.dirname(tiff_path)

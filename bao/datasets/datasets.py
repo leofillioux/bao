@@ -14,7 +14,8 @@ def get_dataset(task: str,
     """
         Get the dataset for the given task.
         arguments:
-            task [str]: task of the dataset (classification, segmentation)
+            task [str]: task of the dataset (e.g., classification, segmentation)
+            data_dir [str]: directory to the saved dataset
             kwargs: additional arguments to pass to the dataset
         returns:
             dataset [torch.utils.data.Dataset]: dataset for the given task
