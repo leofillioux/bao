@@ -35,3 +35,9 @@ orgaextractor:
   task: segmentation
   size: [1024, 1024]
   num_classes: 2
+
+multiorg:
+  url: https://zenodo.org/records/14415968/files/multiorg.zip?download=1
+  task: localization
+  size: [2048, 2048]
+  num_classes: None

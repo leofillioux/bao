@@ -1,8 +1,11 @@
 import os
 import h5py
+import json
 import numpy as np
 import pandas as pd
 from PIL import Image
+from pathlib import Path
+from tqdm import tqdm
 
 def prepare_orgaquant(in_dir: str,
                       out_path: str,
@@ -31,7 +34,9 @@ def prepare_orgaquant(in_dir: str,
             group_img = group.create_group('images')
             group_lbl = group.create_group('labels')
             images = [os.path.join(in_dir, split, img) for img in os.listdir(os.path.join(in_dir, split)) if img.endswith(extension)]
-            for img_path in images:
+            for img_path in tqdm(images,
+                                 desc=split,
+                                 leave=False):
                 img_name = os.path.basename(img_path)
                 img = np.array(Image.open(img_path).convert('L'))
                 img_labels = labels[labels.iloc[:, 0] == img_name].iloc[:, 1:-1].to_numpy()
@@ -74,7 +79,10 @@ def prepare_orgasegment(in_dir: str,
 
             images = [os.path.join(in_dir, split, img) for img in os.listdir(os.path.join(in_dir, split)) if img.endswith(img_extension)]
             masks = [img.replace(img_extension, mask_extension) for img in images]
-            for img_path, mask_path in zip(images, masks):
+            for img_path, mask_path in tqdm(zip(images, masks),
+                                            desc=split,
+                                            total=len(images),
+                                            leave=False):
                 img_name = os.path.splitext(os.path.basename(img_path))[0]
                 img = np.array(Image.open(img_path).convert('L'))
                 mask = (np.array(Image.open(mask_path).convert('L')) > 0).astype(int)
@@ -105,7 +113,10 @@ def prepare_tellu(in_dir: str,
         for split in ['train', 'val']:
             images = [os.path.join(in_dir, split, 'images', img) for img in os.listdir(os.path.join(in_dir, split, 'images')) if img.endswith(img_extension)]
             labels = [os.path.join(in_dir, split, 'labels', os.path.basename(img.replace(img_extension, lbl_extension))) for img in images]
-            for img_path, lbl_path in zip(images, labels):
+            for img_path, lbl_path in tqdm(zip(images, labels),
+                                           desc=split,
+                                           total=len(images),
+                                           leave=False):
                 img_name = os.path.splitext(os.path.basename(img_path))[0]
                 img = np.array(Image.open(img_path).convert('L'))
                 with open(lbl_path, 'r') as f:
@@ -146,7 +157,10 @@ def prepare_orgaextractor(in_dirs: str,
             mask_group = group.create_group('masks')
             images = [os.path.join(in_dir, img) for img in os.listdir(in_dir) if img.endswith(img_extension)]
             masks = [img.replace(img_extension, mask_extension).replace('input', 'label') for img in images]
-            for img_path, mask_path in zip(images, masks):
+            for img_path, mask_path in tqdm(zip(images, masks),
+                                            desc=split,
+                                            total=len(images),
+                                            leave=False):
                 img_name = os.path.splitext(os.path.basename(img_path))[0]
                 img = np.array(Image.open(img_path).convert('L'))
                 mask = np.array(Image.open(mask_path).convert('L'))
@@ -192,7 +206,9 @@ def prepare_dcrypto(in_dir: str,
             for label in labels:
                 label_group = group.get(label) if label in group.keys() else group.create_group(label)
                 images = [os.path.join(in_dir, label, img) for img in os.listdir(os.path.join(in_dir, label)) if img.endswith(img_extension)]
-                for img_path in images:
+                for img_path in tqdm(images,
+                                     desc=split,
+                                     leave=False):
                     img_name = os.path.splitext(os.path.basename(img_path))[0]
                     img = np.array(Image.open(img_path).convert('L'))
                     label_group.create_dataset(img_name, data=img)
@@ -232,3 +248,43 @@ def prepare_dcrypto_opaque(in_dir: str,
             None
     """
     prepare_dcrypto(in_dir, out_path, labels, folder_name, img_extension, True)
+
+def prepare_multiorg(in_dir: str,
+                     out_path: str):
+    """
+        TODO
+    """
+    def get_corresponding_json(tiff_path):
+        dir_path = os.path.dirname(tiff_path)
+        json_path = [os.path.join(dir_path, f) for f in os.listdir(dir_path) if f.endswith('.json')]
+        assert len(json_path) == 1, f'Found {len(json_path)} json files for {tiff_path}.'
+        return json_path[0]
+    
+    def preprocess_label(label):
+        lbl = []
+        for key in label:
+            corners = np.array(label[key])
+            start_x, start_y = corners.min(0)
+            end_x, end_y = corners.max(0)
+            lbl.append([start_x, start_y, end_x, end_y])
+        return np.array(lbl)
+
+    with h5py.File(out_path, 'w') as hdf:
+        for split in ['train', 'test']:
+            group = hdf.create_group(split)
+            img_group = group.create_group('images')
+            lbl_group = group.create_group('labels')
+            images = [path for path in Path(os.path.join(in_dir, split)).rglob('*.tiff')]
+            labels = list(map(get_corresponding_json, images))
+
+            for img_path, lbl_path in tqdm(zip(images, labels),
+                                           desc=split,
+                                           total=len(images),
+                                           leave=False):
+                img_name = '_'.join(os.path.dirname(img_path).split('/')[-3:])
+                img = np.array(Image.open(img_path).convert('L'))
+                with open(lbl_path, 'r') as f:
+                    lbl = json.load(f)
+                lbl = preprocess_label(lbl)
+                img_group.create_dataset(img_name, data=img)
+                lbl_group.create_dataset(img_name, data=lbl)
