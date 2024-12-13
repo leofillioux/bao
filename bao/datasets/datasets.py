@@ -28,6 +28,8 @@ def get_dataset(task: str,
         dataset = ClassificationDataset
     elif task == 'segmentation':
         dataset = SegmentationDataset
+    elif task == 'detection':
+        dataset = DetectionDataset
     else:
         raise ValueError(f'Task {task} not supported.')
     return dataset(data_dir=data_dir, **kwargs)
@@ -36,9 +38,9 @@ class SegmentationDataset(Dataset):
     def __init__(self,
                  dataset_name: str,
                  data_dir: str,
-                 names: int,
+                 names: list[str],
                  mode: str,
-                 img_size: tuple):
+                 img_size: tuple[int]):
         """
             Initialize the segmentation dataset.
             arguments:
@@ -69,9 +71,9 @@ class ClassificationDataset(Dataset):
     def __init__(self,
                  dataset_name: str,
                  data_dir: str,
-                 names: int,
+                 names: list[str],
                  mode: str,
-                 img_size: tuple):
+                 img_size: tuple[int]):
         """
             Initialize the classification dataset.
             arguments:
@@ -99,4 +101,37 @@ class ClassificationDataset(Dataset):
             img = np.array(hdf.get(os.path.join(self.mode, self.names[idx])))
         img = self.preprocess_img(img)
         label = torch.tensor(self.labels[idx]).float()
+        return img, label
+
+class DetectionDataset(Dataset):
+    def __init__(self,
+                 dataset_name: str,
+                 data_dir: str,
+                 names: list[str],
+                 mode: str,
+                 img_size: tuple[int]):
+        """
+            Initialize the detection dataset.
+            arguments:
+                dataset_name [str]: name of the dataset to prepare
+                data_dir [str]: directory to save the prepared dataset to
+                names [list]: list of image names
+                mode [str]: mode of the dataset (train, test)
+                img_size [tuple]: size of the images
+        """
+        self.dataset_path = os.path.join(data_dir, f'{dataset_name}.h5')
+        self.names = names
+        self.mode = mode
+        self.preprocess_img = Compose([ToTensor(), Resize(img_size), RGB()])
+
+    def __len__(self):
+        return len(self.names)
+    
+    def __getitem__(self, idx):
+        with h5py.File(self.dataset_path, 'r') as hdf:
+            img = np.array(hdf.get(os.path.join(self.mode, 'images', self.names[idx])))
+            lbl = np.array(hdf.get(os.path.join(self.mode, 'labels', self.names[idx])))
+        img = self.preprocess_img(img)
+        label = {'boxes': torch.tensor(lbl[:, 1:]),
+                'labels': torch.tensor(lbl[:, 0]).long()}
         return img, label
