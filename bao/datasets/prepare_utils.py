@@ -39,7 +39,10 @@ def prepare_orgaquant(in_dir: str,
             for img_path in images:
                 img_name = os.path.basename(img_path)
                 img = np.array(Image.open(img_path).convert('L'))
-                img_labels = [row[1:] for row in labels if row[0] == img_name]
+                img_labels = np.array(
+                    [row[1:] for row in labels if row[0] == img_name], 
+                    dtype='int'
+                )
                 group_img.create_dataset(os.path.splitext(img_name)[0], data=img)
                 group_lbl.create_dataset(os.path.splitext(img_name)[0], data=img_labels)
 
