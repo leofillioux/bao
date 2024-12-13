@@ -1,14 +1,8 @@
-import torch
-import lightning as L
-from .models import get_model
-from ..datasets import get_dataset
-from torch.utils.data import DataLoader
-from ..datasets import get_dataset_split
-from .train_utils import update_easydict
-from ..configs import train_config, dataset_config, default_data_dir
-from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint
+from torch.nn import Module
+from ..configs import default_data_dir
+from lightning import LightningModule
 
-def train(model: torch.nn.Module | L.LightningModule,
+def train(model: Module | LightningModule,
           dataset_name: str,
           split: int,
           data_dir: str = default_data_dir,
@@ -26,6 +20,16 @@ def train(model: torch.nn.Module | L.LightningModule,
         returns:
             None
     """
+    from ..datasets import get_dataset_split
+    from ..configs import train_config, dataset_config, default_data_dir
+    import torch
+    import lightning as L
+    from .models import get_model
+    from ..datasets import get_dataset
+    from torch.utils.data import DataLoader
+    from .train_utils import update_easydict
+    from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint
+
     updated_train_config = update_easydict(train_config, kwargs)
     L.seed_everything(updated_train_config.seed, workers=True)
 
