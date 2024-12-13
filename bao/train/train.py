@@ -1,8 +1,7 @@
 from torch.nn import Module
 from ..configs import default_data_dir
-from lightning import LightningModule
 
-def train(model: Module | LightningModule,
+def train(model: Module,
           dataset_name: str,
           split: int,
           data_dir: str = default_data_dir,
