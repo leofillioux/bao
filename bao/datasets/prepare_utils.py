@@ -1,7 +1,7 @@
 import os
+import csv
 import h5py
 import numpy as np
-import pandas as pd
 from PIL import Image
 
 def prepare_orgaquant(in_dir: str,
@@ -22,10 +22,15 @@ def prepare_orgaquant(in_dir: str,
     with h5py.File(out_path, 'w') as hdf:
         for split in ['train', 'test']:
             if split == 'train':
-                labels = pd.read_csv(os.path.join(in_dir, 'train_labels.csv'), header=None)
+                labels_file = os.path.join(in_dir, 'train_labels.csv')
             else:
-                labels = pd.read_csv(os.path.join(in_dir, 'test_labels.csv'))
-            labels.iloc[:, 0] = labels.iloc[:, 0].apply(lambda x: os.path.basename(x))
+                labels_file = os.path.join(in_dir, 'test_labels.csv')
+            
+            with open(labels_file, 'r') as f:
+                reader = csv.reader(f)
+                labels = list(reader)
+            
+            labels = [[os.path.basename(row[0])] + row[1:-1] for row in labels]
 
             group = hdf.create_group(split)
             group_img = group.create_group('images')
@@ -34,7 +39,7 @@ def prepare_orgaquant(in_dir: str,
             for img_path in images:
                 img_name = os.path.basename(img_path)
                 img = np.array(Image.open(img_path).convert('L'))
-                img_labels = labels[labels.iloc[:, 0] == img_name].iloc[:, 1:-1].to_numpy()
+                img_labels = [row[1:] for row in labels if row[0] == img_name]
                 group_img.create_dataset(os.path.splitext(img_name)[0], data=img)
                 group_lbl.create_dataset(os.path.splitext(img_name)[0], data=img_labels)
 

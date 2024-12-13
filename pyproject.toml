@@ -7,7 +7,6 @@ name = "bao"
 version = "0.0.1"
 dependencies = [
     "h5py",
-    "pandas", # can be removed since it is used only once to read a csv file
     "gdown",
     "PyYAML",
     "easydict", # do we really need this? 
