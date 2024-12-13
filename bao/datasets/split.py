@@ -4,7 +4,8 @@ from ..configs import default_data_dir
 def get_dataset_split(dataset_name: str,
                       split: int,
                       num_splits: int,
-                      data_dir: str = default_data_dir) -> None:
+                      data_dir: str = default_data_dir,
+                      seed: int = 0) -> None:
     """
         Get the names of the images in the dataset splits.
         arguments:
@@ -12,6 +13,7 @@ def get_dataset_split(dataset_name: str,
             split [int]: index of the split to get
             num_splits [int]: number of splits to create
             data_dir [str]: directory to save the prepared dataset to
+            seed [int]: seed for the random number generator
         returns:
             None
     """
@@ -33,12 +35,12 @@ def get_dataset_split(dataset_name: str,
             test_names = [os.path.join(cls, img) for cls in list(hdf.get('test').keys())
                           for img in list(hdf.get(os.path.join('test', cls)).keys())] if has_test else None
             train_labels = [os.path.dirname(name) for name in train_names]
-            splitter = StratifiedKFold(num_splits)
+            splitter = StratifiedKFold(num_splits, random_state=seed, shuffle=True)
             train_idx, val_idx = list(splitter.split(train_names, train_labels))[split]
         else:
             train_names = list(hdf.get('train/images').keys())
             test_names = list(hdf.get('test/images').keys()) if has_test else None
-            splitter = KFold(num_splits)
+            splitter = KFold(num_splits, random_state=seed, shuffle=True)
             train_idx, val_idx = list(splitter.split(train_names))[split]
 
     val_names = [train_names[i] for i in val_idx]

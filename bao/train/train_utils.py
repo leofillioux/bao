@@ -33,9 +33,9 @@ def dice_metric(y_hat: torch.tensor,
     dice = (2. * intersection) / (y_hat.sum() + y.sum())
     return dice
 
-def update_easydict_recursive(easydict_obj, kwargs):
+def update_easydict(easydict_obj, kwargs):
     """
-        Recursively updates values in an EasyDict object with values from kwargs.
+    Updates values in an EasyDict object with values from kwargs.
         arguments:
             easydict_obj [edict]: EasyDict object to update
             kwargs [dict]: dictionary of key-value pairs to update
@@ -43,13 +43,11 @@ def update_easydict_recursive(easydict_obj, kwargs):
             updated_easydict [edict]: updated EasyDict object
     """
     for key, value in kwargs.items():
-        if key in easydict_obj:
-            if isinstance(easydict_obj[key], (dict, edict)) and isinstance(value, dict):
-                easydict_obj[key] = update_easydict_recursive(easydict_obj[key], value)
-            else:
-                easydict_obj[key] = value
-        else:
-            for subkey, subvalue in easydict_obj.items():
-                if isinstance(subvalue, (dict, edict)):
-                    easydict_obj[subkey] = update_easydict_recursive(subvalue, kwargs)
+        keys = key.split('.')
+        d = easydict_obj
+        for subkey in keys[:-1]:
+            if subkey not in d:
+                d[subkey] = edict()
+            d = d[subkey]
+        d[keys[-1]] = value
     return easydict_obj

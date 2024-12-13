@@ -3,24 +3,34 @@ import h5py
 import torch
 import numpy as np
 from torch.utils.data import Dataset
+from ..configs import default_data_dir
 from torchvision.transforms.v2 import RGB
 from sklearn.preprocessing import OneHotEncoder
 from torchvision.transforms import Resize, ToTensor, Compose
 
-def get_dataset(task: str) -> Dataset:
+def get_dataset(task: str,
+                data_dir: str = default_data_dir,
+                **kwargs) -> Dataset:
     """
-        Get the dataset class for the given task.
+        Get the dataset for the given task.
         arguments:
-            task [str]: task of the dataset (classification, segmentation)
+            task [str]: task of the dataset (e.g., classification, segmentation)
+            data_dir [str]: directory to the saved dataset
+            kwargs: additional arguments to pass to the dataset
         returns:
-            Dataset: dataset class for the given task
+            dataset [torch.utils.data.Dataset]: dataset for the given task
     """
+    if 'data_dir' in kwargs:
+        data_dir = kwargs['data_dir']
+        kwargs.pop('data_dir')
+
     if task == 'classification':
-        return ClassificationDataset
+        dataset = ClassificationDataset
     elif task == 'segmentation':
-        return SegmentationDataset
+        dataset = SegmentationDataset
     else:
         raise ValueError(f'Task {task} not supported.')
+    return dataset(data_dir=data_dir, **kwargs)
 
 class SegmentationDataset(Dataset):
     def __init__(self,
