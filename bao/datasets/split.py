@@ -1,7 +1,5 @@
 import os
-import h5py
-from ..configs import dataset_config, default_data_dir
-from sklearn.model_selection import KFold, StratifiedKFold
+from ..configs import default_data_dir
 
 def get_dataset_split(dataset_name: str,
                       split: int,
@@ -17,6 +15,11 @@ def get_dataset_split(dataset_name: str,
         returns:
             None
     """
+
+    import h5py
+    from ..configs import dataset_config, default_data_dir
+    from sklearn.model_selection import KFold, StratifiedKFold
+
     assert dataset_name in dataset_config, f'Dataset {dataset_name} not found in dataset_configs.yaml.'
 
     dataset_path = os.path.join(data_dir, f'{dataset_name}.h5')
