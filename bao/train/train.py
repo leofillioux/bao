@@ -31,7 +31,7 @@ def train(model: torch.nn.Module | L.LightningModule,
 
     assert dataset_name in dataset_config, f'Dataset {dataset_name} not found in dataset_configs.yaml.'
 
-    if isinstance(model, torch.nn.Module):
+    if not isinstance(model, L.LightningModule):
         model = get_model(dataset_config[dataset_name].task)(model,
                                                             updated_train_config.optimizer,
                                                             updated_train_config.optimizer_params,
