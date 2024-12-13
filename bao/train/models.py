@@ -20,6 +20,8 @@ def get_model(task: str) -> L.LightningModule:
         model = ClassificationModel
     elif task == 'segmentation':
         model = SegmentationModel
+    elif task == 'detection':
+        model = DetectionModel
     else:
         raise ValueError(f'Task {task} not supported.')
     return model
@@ -161,5 +163,47 @@ class SegmentationModel(L.LightningModule):
                 plt.show()
             break
     
+    def configure_optimizers(self):
+        return getattr(optim, self._optimizer_name)(self.parameters(), **self._optimizer_params)
+
+class DetectionModel(L.LightningModule):
+    def __init__(self,
+                 model: torch.nn.Module,
+                 optimizer_name: str,
+                 optimizer_params: dict,
+                 num_classes: int = None):
+        super(DetectionModel, self).__init__()
+        self.save_hyperparameters(ignore=['model'])
+        self.model = model
+        self._optimizer_name = optimizer_name
+        self._optimizer_params = optimizer_params
+
+    def training_step(self, batch, batch_idx):
+        x, y = batch
+        loss = self(x, y)
+        loss = sum([loss[k] for k in loss])
+        self.log('train/loss', loss, on_epoch=True, on_step=False, prog_bar=True, batch_size=len(x))
+        return loss
+    
+    def validation_step(self, batch, batch_idx):
+        x, y = batch
+        self.model.train()
+        with torch.no_grad():
+            loss = self(x, y)
+            loss = sum([loss[k] for k in loss])
+        self.model.eval()
+
+        self.log('val/loss', loss, on_epoch=True, on_step=False, prog_bar=True, batch_size=len(x))
+        return loss
+    
+    def forward(self, x, y):
+        x = list(image for image in x)
+        y = [{k: v for k, v in t.items()} for t in y]
+        return self.model(x, y)
+    
+    @staticmethod
+    def collate_fn(batch):
+        return tuple(zip(*batch))
+
     def configure_optimizers(self):
         return getattr(optim, self._optimizer_name)(self.parameters(), **self._optimizer_params)
