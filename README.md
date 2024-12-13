@@ -2,7 +2,7 @@
 
 ## Documentation
 ### Handling the data
-The `bao.datasets.prepare_dataset` function downloads the specified dataset and preprocesses it in the desired format. The name of the dataset should correspond to the name given in `configs/dataset_config.yaml`.
+The [**`bao.datasets.prepare_dataset`**](bao/datasets/prepare.py) function downloads the specified dataset and preprocesses it in the desired format. The name of the dataset should correspond to the name given in `configs/dataset_config.yaml`.
 | Argument | Type | Description | Default |
 |----------|------|-------------|---------|
 | dataset_name | str | name of the dataset to prepare |  |
@@ -14,7 +14,7 @@ import bao
 bao.datasets.prepare_dataset(dataset_name='orgasegment')
 ```
 
-The `bao.datasets.get_dataset_split` function splits the dataset into train, validation and testing given the number of splits and the desired split in a deterministic fashion.
+The [**`bao.datasets.get_dataset_split`**](bao/datasets/split.py) function splits the dataset into train, validation and testing given the number of splits and the desired split in a deterministic fashion.
 | Argument | Type | Description | Default |
 |----------|------|-------------|---------|
 | dataset_name | str | name of the dataset to prepare | |
@@ -27,7 +27,7 @@ import bao
 train_names, val_names, test_names = bao.datasets.get_dataset_split(dataset_name='orgasegment', split=0, num_splits=4)
 ```
 
-The `bao.datasets.get_dataset` function allows to have access to the dataset classes. Note that the mode given to the dataset should be 'train' for the training and validation set.
+The [**`bao.datasets.get_dataset`**](bao/datasets/datasets.py) function allows to have access to the dataset classes. Note that the mode given to the dataset should be 'train' for the training and validation set.
 | Argument | Type | Description | Default |
 |----------|------|-------------|---------|
 | task | str | task of the dataset (e.g., classification, segmentation) | |
@@ -40,7 +40,7 @@ train_dataset = bao.datasets.get_dataset(task='segmentation', names=train_names,
 ```
 
 ### Training a model
-The `bao.train` function is a packaged way of training your model. This can be done either by:
+The [**`bao.train`**](bao/train/train.py) function is a packaged way of training your model. This can be done either by:
 - defining your `torch.nn.Module` model, which should output only the tensor output (i.e., no dictionary)
 - defining your `lightning.LightningModule` model, for which you can define your own losses (make sure to log at least 'train/loss' and 'val/loss', and optionally 'train/metric' and 'val/metric')
 
