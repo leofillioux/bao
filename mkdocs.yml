@@ -1,7 +1,7 @@
 site_name: Bao
 nav:
-  - About: about.md
-  - Tutorial: index.md
+  - Home: index.md
+  - Tutorial: tutorial.md
   - API: 
     - 'Datasets': api/datasets.md
     - 'Train': api/train.md
