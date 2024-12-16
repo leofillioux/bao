@@ -6,15 +6,16 @@ def get_dataset_split(dataset_name: str,
                       num_splits: int,
                       data_dir: str = default_data_dir,
                       seed: int = 0) -> None:
-    """
-        Get the names of the images in the dataset splits.
-        arguments:
+    """Get the names of the images in the dataset splits.
+        
+        Args:
             dataset_name [str]: name of the dataset to prepare
             split [int]: index of the split to get
             num_splits [int]: number of splits to create
             data_dir [str]: directory to save the prepared dataset to
             seed [int]: seed for the random number generator
-        returns:
+        
+        Returns:
             None
     """
 
