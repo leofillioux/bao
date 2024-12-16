@@ -138,10 +138,15 @@ class DetectionDataset(Dataset):
             img = np.array(hdf.get(os.path.join(self.mode, 'images', self.names[idx])))
             lbl = np.array(hdf.get(os.path.join(self.mode, 'labels', self.names[idx])))
         img = self.preprocess_img(img)
+
         if self.predict_classes:
             label = {'boxes': torch.tensor(lbl[:, 1:]),
                      'labels': torch.tensor(lbl[:, 0]).long()}
         else:
-            label = {'boxes': torch.tensor(lbl),
-                     'labels': torch.ones(lbl[:, 0].shape).long()}
+            if len(lbl.shape) == 2:
+                label = {'boxes': torch.tensor(lbl),
+                         'labels': torch.zeros(lbl[:, 0].shape).long()}
+            else:
+                label = {'boxes': torch.as_tensor(np.array(np.zeros((0, 4)), dtype=float)),
+                         'labels': torch.as_tensor(np.array([], dtype=int), dtype=torch.int64)}
         return img, label
