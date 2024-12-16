@@ -20,7 +20,7 @@ def get_model(task: str) -> L.LightningModule:
         model = ClassificationModel
     elif task == 'segmentation':
         model = SegmentationModel
-    elif task == 'detection':
+    elif task in ['detection', 'localization']:
         model = DetectionModel
     else:
         raise ValueError(f'Task {task} not supported.')

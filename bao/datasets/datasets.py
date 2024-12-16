@@ -2,6 +2,7 @@ import os
 import h5py
 import torch
 import numpy as np
+from functools import partial
 from torch.utils.data import Dataset
 from ..configs import default_data_dir
 from torchvision.transforms.v2 import RGB
@@ -29,7 +30,9 @@ def get_dataset(task: str,
     elif task == 'segmentation':
         dataset = SegmentationDataset
     elif task == 'detection':
-        dataset = DetectionDataset
+        dataset = partial(DetectionDataset, predict_classes=True)
+    elif task == 'localization':
+        dataset = partial(DetectionDataset, predict_classes=False)
     else:
         raise ValueError(f'Task {task} not supported.')
     return dataset(data_dir=data_dir, **kwargs)
@@ -109,7 +112,8 @@ class DetectionDataset(Dataset):
                  data_dir: str,
                  names: list[str],
                  mode: str,
-                 img_size: tuple[int]):
+                 img_size: tuple[int],
+                 predict_classes: bool):
         """
             Initialize the detection dataset.
             arguments:
@@ -118,10 +122,12 @@ class DetectionDataset(Dataset):
                 names [list]: list of image names
                 mode [str]: mode of the dataset (train, test)
                 img_size [tuple]: size of the images
+                predict_classes [bool]: whether to predict classes (False for localization, True for detection)
         """
         self.dataset_path = os.path.join(data_dir, f'{dataset_name}.h5')
         self.names = names
         self.mode = mode
+        self.predict_classes = predict_classes
         self.preprocess_img = Compose([ToTensor(), Resize(img_size), RGB()])
 
     def __len__(self):
@@ -132,6 +138,10 @@ class DetectionDataset(Dataset):
             img = np.array(hdf.get(os.path.join(self.mode, 'images', self.names[idx])))
             lbl = np.array(hdf.get(os.path.join(self.mode, 'labels', self.names[idx])))
         img = self.preprocess_img(img)
-        label = {'boxes': torch.tensor(lbl[:, 1:]),
-                'labels': torch.tensor(lbl[:, 0]).long()}
+        if self.predict_classes:
+            label = {'boxes': torch.tensor(lbl[:, 1:]),
+                     'labels': torch.tensor(lbl[:, 0]).long()}
+        else:
+            label = {'boxes': torch.tensor(lbl),
+                     'labels': torch.ones(lbl[:, 0].shape).long()}
         return img, label
