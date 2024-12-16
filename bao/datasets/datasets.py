@@ -137,7 +137,11 @@ class DetectionDataset(Dataset):
         with h5py.File(self.dataset_path, 'r') as hdf:
             img = np.array(hdf.get(os.path.join(self.mode, 'images', self.names[idx])))
             lbl = np.array(hdf.get(os.path.join(self.mode, 'labels', self.names[idx])))
+        pre_w, pre_h = img.shape[-2], img.shape[-1]
         img = self.preprocess_img(img)
+        post_w, post_h = img.shape[-2], img.shape[-1]
+        w_ratio = post_w / pre_w
+        h_ratio = post_h / pre_h
 
         if self.predict_classes:
             label = {'boxes': torch.tensor(lbl[:, 1:]),
@@ -149,4 +153,8 @@ class DetectionDataset(Dataset):
             else:
                 label = {'boxes': torch.as_tensor(np.array(np.zeros((0, 4)), dtype=float)),
                          'labels': torch.as_tensor(np.array([], dtype=int), dtype=torch.int64)}
+
+        size_augmentation = np.array([w_ratio, h_ratio, w_ratio, h_ratio]).reshape(1, -1)
+        label['boxes'] *= size_augmentation
+
         return img, label

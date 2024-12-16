@@ -32,7 +32,6 @@ def prepare_orgaquant(in_dir: str,
             with open(labels_file, 'r') as f:
                 reader = csv.reader(f)
                 labels = list(reader) if split == 'train' else list(reader)[1:]
-            print(labels[:2])
             
             labels = [[os.path.basename(row[0])] + row[1:-1] for row in labels]
 
