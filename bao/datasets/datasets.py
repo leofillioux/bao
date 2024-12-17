@@ -149,7 +149,7 @@ class DetectionDataset(Dataset):
         else:
             if len(lbl.shape) == 2:
                 label = {'boxes': torch.tensor(lbl),
-                         'labels': torch.zeros(lbl[:, 0].shape).long()}
+                         'labels': torch.ones(lbl[:, 0].shape).long()}
             else:
                 label = {'boxes': torch.as_tensor(np.array(np.zeros((0, 4)), dtype=float)),
                          'labels': torch.as_tensor(np.array([], dtype=int), dtype=torch.int64)}
