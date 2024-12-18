@@ -20,7 +20,7 @@ def get_model(task: str) -> L.LightningModule:
         model = ClassificationModel
     elif task == 'segmentation':
         model = SegmentationModel
-    elif task == 'detection':
+    elif task in ['detection', 'localization']:
         model = DetectionModel
     else:
         raise ValueError(f'Task {task} not supported.')
@@ -175,6 +175,7 @@ class DetectionModel(L.LightningModule):
         super(DetectionModel, self).__init__()
         self.save_hyperparameters(ignore=['model'])
         self.model = model
+        self.metric = torchmetrics.detection.MeanAveragePrecision(iou_type='bbox')
         self._optimizer_name = optimizer_name
         self._optimizer_params = optimizer_params
 
@@ -187,6 +188,10 @@ class DetectionModel(L.LightningModule):
     
     def validation_step(self, batch, batch_idx):
         x, y = batch
+        y_hat = self(x, y)
+        self.metric.update(y_hat, y)
+        metric = self.metric.compute()['map_50']
+
         self.model.train()
         with torch.no_grad():
             loss = self(x, y)
@@ -194,6 +199,7 @@ class DetectionModel(L.LightningModule):
         self.model.eval()
 
         self.log('val/loss', loss, on_epoch=True, on_step=False, prog_bar=True, batch_size=len(x))
+        self.log('val/metric', metric, on_epoch=True, on_step=False, prog_bar=True, batch_size=len(x))
         return loss
     
     def forward(self, x, y):
