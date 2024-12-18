@@ -21,7 +21,7 @@ def train(model: Module,
             None
     """
     from ..datasets import get_dataset_split
-    from ..configs import train_config, dataset_config, default_data_dir
+    from ..configs import train_config, dataset_config
     import torch
     import lightning as L
     from .models import get_model

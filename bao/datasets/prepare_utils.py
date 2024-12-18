@@ -158,6 +158,9 @@ def prepare_orgaextractor(in_dirs: str,
             out_path [str]: path to save the prepared dataset
             img_extension [str]: extension of the images in the dataset
             mask_extension [str]: extension of the masks in the dataset
+        
+        Returns:
+            None
     """
     with h5py.File(out_path, 'w') as hdf:
         for in_dir in in_dirs:

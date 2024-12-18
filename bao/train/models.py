@@ -40,10 +40,12 @@ class ClassificationModel(L.LightningModule):
 
         self.loss = torch.nn.BCELoss()
         if num_classes == 2:
-            self.metric = torchmetrics.F1Score(task='binary')
+            self.metric_f1 = torchmetrics.F1Score(task='binary')
+            self.metric_auc = torchmetrics.AUROC(task='binary')
             self.model = nn.Sequential(self.model, nn.LazyLinear(1))
         else:
-            self.metric = torchmetrics.F1Score(task='multiclass', num_classes=num_classes)
+            self.metric_f1 = torchmetrics.F1Score(task='multiclass', num_classes=num_classes)
+            self.metric_auc = torchmetrics.AUROC(task='multiclass', num_classes=num_classes)
             self.model = nn.Sequential(self.model, nn.LazyLinear(num_classes))
 
     def on_train_epoch_start(self):
@@ -64,8 +66,10 @@ class ClassificationModel(L.LightningModule):
     def on_train_epoch_end(self):
         self.train_labels = torch.cat(self.train_labels)
         self.train_preds = torch.cat(self.train_preds)
-        metric = self.metric(self.train_preds, self.train_labels)
-        self.log('train/metric', metric, on_epoch=True, on_step=False, prog_bar=True)
+        metric_f1 = self.metric_f1(self.train_preds, self.train_labels)
+        metric_auc = self.metric_auc(self.train_preds, self.train_labels)
+        self.log('train/metric_f1', metric_f1, on_epoch=True, on_step=False, prog_bar=True)
+        self.log('train/metric_auc', metric_auc, on_epoch=True, on_step=False, prog_bar=True)
         return super().on_train_epoch_end()
     
     def on_validation_epoch_start(self):
@@ -76,8 +80,10 @@ class ClassificationModel(L.LightningModule):
     def on_validation_epoch_end(self):
         self.val_labels = torch.cat(self.val_labels)
         self.val_preds = torch.cat(self.val_preds)
-        metric = self.metric(self.val_preds, self.val_labels)
-        self.log('val/metric', metric, on_epoch=True, on_step=False, prog_bar=True)
+        metric_f1 = self.metric_f1(self.val_preds, self.val_labels)
+        metric_auc = self.metric_auc(self.val_preds, self.val_labels)
+        self.log('val/metric_f1', metric_f1, on_epoch=True, on_step=False, prog_bar=True)
+        self.log('val/metric_auc', metric_auc, on_epoch=True, on_step=False, prog_bar=True)
         return super().on_validation_epoch_end()
 
     def validation_step(self, batch, batch_idx):
@@ -122,7 +128,7 @@ class SegmentationModel(L.LightningModule):
         metric = self.metric(y_hat, y)
 
         self.log('train/loss', loss, on_epoch=True, on_step=False, prog_bar=True)
-        self.log('train/metric', metric, on_epoch=True, on_step=False, prog_bar=True)
+        self.log('train/metric_dice', metric, on_epoch=True, on_step=False, prog_bar=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
@@ -132,7 +138,7 @@ class SegmentationModel(L.LightningModule):
         metric = self.metric(y_hat, y)
 
         self.log('val/loss', loss, on_epoch=True, on_step=False, prog_bar=True)
-        self.log('val/metric', metric, on_epoch=True, on_step=False, prog_bar=True)
+        self.log('val/metric_dice', metric, on_epoch=True, on_step=False, prog_bar=True)
         return loss
 
     def on_fit_end(self):
@@ -199,7 +205,7 @@ class DetectionModel(L.LightningModule):
         self.model.eval()
 
         self.log('val/loss', loss, on_epoch=True, on_step=False, prog_bar=True, batch_size=len(x))
-        self.log('val/metric', metric, on_epoch=True, on_step=False, prog_bar=True, batch_size=len(x))
+        self.log('val/metric_map50', metric, on_epoch=True, on_step=False, prog_bar=True, batch_size=len(x))
         return loss
     
     def forward(self, x, y):
