@@ -1,0 +1,16 @@
+site_name: Bao
+nav:
+  - Home: index.md
+  - Tutorial: tutorial.md
+  - API: 
+    - 'Datasets': api/datasets.md
+    - 'Train': api/train.md
+theme: material
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_root_heading: true
+            heading_level: 3

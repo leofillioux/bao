@@ -11,14 +11,15 @@ def prepare_orgaquant(in_dir: str,
                       out_path: str,
                       folder_name: str = 'Intestinal Organoid Dataset',
                       extension: str = '.jpg') -> None:
-    """
-        Prepare the OrgaQuant dataset for training and testing.
-        arguments:
+    """Prepare the OrgaQuant dataset for training and testing.
+        
+        Args:
             in_dir [str]: path to the directory containing the OrgaQuant dataset
             out_path [str]: path to save the prepared dataset
             folder_name [str]: name of the folder in the downloaded dataset
             extension [str]: extension of the images in the dataset
-        returns:
+        
+        Returns:
             None
     """
     in_dir = os.path.join(in_dir, folder_name)
@@ -56,15 +57,16 @@ def prepare_orgasegment(in_dir: str,
                         folder_name: str = 'OrganoidBasic_v20211206',
                         img_extension: str = '_img.jpg',
                         mask_extension: str = '_masks_organoid.png') -> None:
-    """
-        Prepare the OrgaSegment dataset for training and testing.
-        arguments:
+    """Prepare the OrgaSegment dataset for training and testing.
+        
+        Args:
             in_dir [str]: path to the directory containing the OrgaSegment dataset
             out_path [str]: path to save the prepared dataset
             folder_name [str]: name of the folder in the downloaded dataset
             img_extension [str]: extension of the images in the dataset
             mask_extension [str]: extension of the masks in the dataset
-        returns:
+        
+        Returns:
             None
     """
     in_dir = os.path.join(in_dir, folder_name)
@@ -102,15 +104,16 @@ def prepare_tellu(in_dir: str,
                   folder_name: str = 'OrganoidDataset',
                   img_extension: str = '.jpeg',
                   lbl_extension: str = '.txt') -> None:
-    """
-        Prepare the Tellu dataset for training and testing.
-        arguments:
+    """Prepare the Tellu dataset for training and testing.
+        
+        Args:
             in_dir [str]: path to the directory containing the Tellu dataset
             out_path [str]: path to save the prepared dataset
             folder_name [str]: name of the folder in the downloaded dataset
             img_extension [str]: extension of the images in the dataset
             lbl_extension [str]: extension of the labels in the dataset
-        returns:
+        
+        Returns:
             None
     """
     in_dir = os.path.join(in_dir, folder_name)
@@ -149,9 +152,8 @@ def prepare_orgaextractor(in_dirs: str,
                           out_path: str,
                           img_extension: str = '.jpg',
                           mask_extension: str = '.tif') -> None:
-    """
-        Prepare the OrgaExtractor dataset for training and testing.
-        arguments:
+    """Prepare the OrgaExtractor dataset for training and testing.
+        Args:
             in_dirs [list]: list to the paths to the directories containing the OrgaExtractor dataset
             out_path [str]: path to save the prepared dataset
             img_extension [str]: extension of the images in the dataset
@@ -181,16 +183,17 @@ def prepare_dcrypto(in_dir: str,
                    folder_name: str,
                    img_extension: str,
                    is_val: bool) -> None:
-    """
-        Prepare the D-CryptO dataset.
-        arguments:
+    """Prepare the D-CryptO dataset.
+        
+        Args:
             in_dir [str]: path to the directory containing the Tellu dataset
             out_path [str]: path to save the prepared dataset
             folder_name [str]: name of the folder in the downloaded dataset
             labels: [list] names of the labels in the dataset
             img_extension [str]: extension of the images in the dataset
             is_val [bool]: whether there is a validation dataset
-        returns:
+        
+        Returns:
             None
     """
     in_dir = os.path.join(in_dir, folder_name)
@@ -226,15 +229,16 @@ def prepare_dcrypto_budding(in_dir: str,
                             labels: list = ['budding', 'none'],
                             folder_name: str = 'Budding Dataset',
                             img_extension: str = '.jpg') -> None:
-    """
-        Prepare the D-CryptO dataset, for the budding classification task.
-        arguments:
+    """Prepare the D-CryptO dataset, for the budding classification task.
+        
+        Args:
             in_dir [str]: path to the directory containing the Tellu dataset
             out_path [str]: path to save the prepared dataset
             folder_name [str]: name of the folder in the downloaded dataset
             labels: [list] names of the labels in the dataset
             img_extension [str]: extension of the images in the dataset
-        returns:
+        
+        Returns:
             None
     """
     prepare_dcrypto(in_dir, out_path, labels, folder_name, img_extension, False)
@@ -244,27 +248,29 @@ def prepare_dcrypto_opaque(in_dir: str,
                            folder_name: str = 'Opacity Dataset',
                            labels: list = ['thick', 'transp'],
                            img_extension: str = '.jpg') -> None:
-    """
-        Prepare the D-CryptO dataset, for the opacity classification task.
-        arguments:
+    """Prepare the D-CryptO dataset, for the opacity classification task.
+        
+        Args:
             in_dir [str]: path to the directory containing the Tellu dataset
             out_path [str]: path to save the prepared dataset
             folder_name [str]: name of the folder in the downloaded dataset
             labels: [list] names of the labels in the dataset
             img_extension [str]: extension of the images in the dataset
-        returns:
+        
+        Returns:
             None
     """
     prepare_dcrypto(in_dir, out_path, labels, folder_name, img_extension, True)
 
 def prepare_multiorg(in_dir: str,
                      out_path: str) -> None:
-    """
-        Prepare the MultiOrg dataset for training and testing.
-        arguments:
+    """Prepare the MultiOrg dataset for training and testing.
+        
+        Args:
             in_dir [str]: path to the directory containing the MultiOrg dataset
             out_path [str]: path to save the prepared dataset
-        returns:
+        
+        Returns:
             None
     """
     def get_corresponding_json(tiff_path):

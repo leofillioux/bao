@@ -7,13 +7,14 @@ from tqdm import tqdm
 def download(url: str,
              fname: str,
              chunk_size: int=1024) -> None:
-    """
-        Download a file from the given URL and save it to the given file name.
-        parameters:
+    """Download a file from the given URL and save it to the given file name.
+        
+        Args:
             url [str]: URL to download the file from
             fname [str]: file name to save the downloaded file to
             chunk_size [int]: size of the chunks to download the file in
-        returns:
+        
+        Returns:
             None
     """
     if 'drive.google.com' in url:
@@ -33,12 +34,13 @@ def download(url: str,
 
 def unzip(zip_path: str,
           unzip_path: str) -> None:
-    """
-        Unzip the file at the given path to the given directory.
-        parameters:
+    """Unzip the file at the given path to the given directory.
+        
+        Args:
             zip_path [str]: path to the zip file
             unzip_path [str]: path to the directory to unzip the file to
-        returns:
+        
+        Returns:
             None
     """
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:

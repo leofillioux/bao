@@ -7,16 +7,17 @@ def train(model: Module,
           data_dir: str = default_data_dir,
           num_splits: int = 4,
           **kwargs) -> None:
-    """
-        Train a model on a specified dataset.
-        arguments:
+    """Train a model on a specified dataset.
+        
+        Args:
             model [torch.nn.Module | L.LightningModule]: model to train
             dataset_name [str]: name of the dataset to train on
             split [int]: index of the split to train on
             data_dir [str]: directory to save the prepared dataset to
             num_splits [int]: number of splits to create
             kwargs: additional arguments to update the training configuration
-        returns:
+        
+        Returns:
             None
     """
     from ..datasets import get_dataset_split

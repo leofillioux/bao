@@ -12,13 +12,14 @@ from torchvision.transforms import Resize, ToTensor, Compose
 def get_dataset(task: str,
                 data_dir: str = default_data_dir,
                 **kwargs) -> Dataset:
-    """
-        Get the dataset for the given task.
-        arguments:
+    """Get the dataset for the given task.
+
+        Args:
             task [str]: task of the dataset (e.g., classification, segmentation)
             data_dir [str]: directory to the saved dataset
             kwargs: additional arguments to pass to the dataset
-        returns:
+        
+        Returns:
             dataset [torch.utils.data.Dataset]: dataset for the given task
     """
     if 'data_dir' in kwargs:
@@ -44,9 +45,9 @@ class SegmentationDataset(Dataset):
                  names: list[str],
                  mode: str,
                  img_size: tuple[int]):
-        """
-            Initialize the segmentation dataset.
-            arguments:
+        """Initialize the segmentation dataset.
+        
+            Args:
                 dataset_name [str]: name of the dataset to prepare
                 data_dir [str]: directory to save the prepared dataset to
                 names [list]: list of image names
@@ -77,9 +78,9 @@ class ClassificationDataset(Dataset):
                  names: list[str],
                  mode: str,
                  img_size: tuple[int]):
-        """
-            Initialize the classification dataset.
-            arguments:
+        """Initialize the classification dataset.
+        
+            Args:
                 dataset_name [str]: name of the dataset to prepare
                 data_dir [str]: directory to save the prepared dataset to
                 names [list]: list of image names
@@ -114,9 +115,8 @@ class DetectionDataset(Dataset):
                  mode: str,
                  img_size: tuple[int],
                  predict_classes: bool):
-        """
-            Initialize the detection dataset.
-            arguments:
+        """Initialize the detection dataset.
+            Args:
                 dataset_name [str]: name of the dataset to prepare
                 data_dir [str]: directory to save the prepared dataset to
                 names [list]: list of image names

@@ -5,14 +5,15 @@ def prepare_dataset(dataset_name: str,
                     should_download: bool = True,
                     download_dir: str = '/tmp',
                     data_dir: str = default_data_dir) -> None:
-    """
-        Download and prepare the dataset with the given name.
-        parameters:
+    """Download and prepare the dataset with the given name.
+        
+        Args:
             dataset_name [str]: name of the dataset to prepare
             should_download [bool]: whether to download the dataset
             download_dir [str]: directory to download the dataset to
             data_dir [str]: directory to save the prepared dataset to
-        returns:
+
+        Returns:
             None
     """
     from . import prepare_utils
