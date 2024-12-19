@@ -416,7 +416,7 @@
 
 
 <h3 id="bao.train" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">bao</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">download</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="n">default_data_dir</span><span class="p">,</span> <span class="n">num_splits</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">bao</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">download</span><span class="p">,</span> <span class="n">download_dir</span><span class="o">=</span><span class="s1">&#39;/tmp&#39;</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="n">default_data_dir</span><span class="p">,</span> <span class="n">num_splits</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
 
 </h3>
 
@@ -483,6 +483,22 @@
             </td>
             <td>
                 <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>download_dir</code>
+            </td>
+            <td>
+                  <code>[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>directory to download the dataset to</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;/tmp&#39;</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -679,10 +695,13 @@
 <span class="normal">104</span>
 <span class="normal">105</span>
 <span class="normal">106</span>
-<span class="normal">107</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Module</span><span class="p">,</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Module</span><span class="p">,</span>
           <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
           <span class="n">split</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
           <span class="n">download</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+          <span class="n">download_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">,</span>
           <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">default_data_dir</span><span class="p">,</span>
           <span class="n">num_splits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
           <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -692,6 +711,7 @@
 <span class="sd">            model [torch.nn.Module | L.LightningModule]: model to train</span>
 <span class="sd">            dataset_name [str]: name of the dataset to train on</span>
 <span class="sd">            split [int]: index of the split to train on</span>
+<span class="sd">            download_dir [str]: directory to download the dataset to</span>
 <span class="sd">            download [bool]: whether to download the dataset</span>
 <span class="sd">            data_dir [str]: directory to save the prepared dataset to</span>
 <span class="sd">            num_splits [int]: number of splits to create</span>
@@ -708,7 +728,7 @@
     <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
     <span class="kn">from</span> <span class="nn">.train_utils</span> <span class="kn">import</span> <span class="n">update_easydict</span>
     <span class="kn">from</span> <span class="nn">..datasets</span> <span class="kn">import</span> <span class="n">get_dataset</span>
-    <span class="kn">from</span> <span class="nn">..datasets.prepare</span> <span class="kn">import</span> <span class="n">prepare_dataset</span>
+    <span class="kn">from</span> <span class="nn">..datasets</span> <span class="kn">import</span> <span class="n">prepare_dataset</span>
     <span class="kn">from</span> <span class="nn">lightning.pytorch.callbacks</span> <span class="kn">import</span> <span class="n">EarlyStopping</span><span class="p">,</span> <span class="n">ModelCheckpoint</span>
 
     <span class="n">updated_train_config</span> <span class="o">=</span> <span class="n">update_easydict</span><span class="p">(</span><span class="n">train_config</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
@@ -718,13 +738,13 @@
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">L</span><span class="o">.</span><span class="n">LightningModule</span><span class="p">):</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">[</span><span class="n">dataset_name</span><span class="p">]</span><span class="o">.</span><span class="n">task</span><span class="p">)(</span><span class="n">model</span><span class="p">,</span>
-                                                            <span class="n">updated_train_config</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span>
-                                                            <span class="n">updated_train_config</span><span class="o">.</span><span class="n">optimizer_params</span><span class="p">,</span>
-                                                            <span class="n">dataset_config</span><span class="p">[</span><span class="n">dataset_name</span><span class="p">]</span><span class="o">.</span><span class="n">num_classes</span><span class="p">)</span>
+                                                             <span class="n">updated_train_config</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span>
+                                                             <span class="n">updated_train_config</span><span class="o">.</span><span class="n">optimizer_params</span><span class="p">,</span>
+                                                             <span class="n">dataset_config</span><span class="p">[</span><span class="n">dataset_name</span><span class="p">]</span><span class="o">.</span><span class="n">num_classes</span><span class="p">)</span>
 
     <span class="n">img_size</span> <span class="o">=</span> <span class="n">dataset_config</span><span class="p">[</span><span class="n">dataset_name</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
     <span class="k">if</span> <span class="n">download</span><span class="p">:</span>
-        <span class="n">prepare_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">download_dir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">)</span>
+        <span class="n">prepare_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">download_dir</span><span class="o">=</span><span class="n">download_dir</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">)</span>
     <span class="n">train_names</span><span class="p">,</span> <span class="n">val_names</span><span class="p">,</span> <span class="n">test_names</span> <span class="o">=</span> <span class="n">get_dataset_split</span><span class="p">(</span><span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
                                                            <span class="n">split</span><span class="o">=</span><span class="n">split</span><span class="p">,</span>
                                                            <span class="n">num_splits</span><span class="o">=</span><span class="n">num_splits</span><span class="p">,</span>
@@ -794,7 +814,7 @@
 
 
 <h3 id="bao.eval" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">bao</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="n">default_data_dir</span><span class="p">,</span> <span class="n">num_splits</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">bao</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="p">,</span> <span class="n">download</span><span class="p">,</span> <span class="n">download_dir</span><span class="o">=</span><span class="s1">&#39;/tmp&#39;</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="n">default_data_dir</span><span class="p">,</span> <span class="n">num_splits</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></code>
 
 </h3>
 
@@ -877,6 +897,38 @@
             </td>
             <td>
                 <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>download</code>
+            </td>
+            <td>
+                  <code>[bool]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>whether to download the dataset</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>download_dir</code>
+            </td>
+            <td>
+                  <code>[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>directory to download the dataset to</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;/tmp&#39;</code>
             </td>
           </tr>
           <tr class="doc-section-item">
@@ -1002,10 +1054,20 @@
 <span class="normal">64</span>
 <span class="normal">65</span>
 <span class="normal">66</span>
-<span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Module</span><span class="p">,</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Module</span><span class="p">,</span>
          <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
          <span class="n">split</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
          <span class="n">checkpoint_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+         <span class="n">download</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+         <span class="n">download_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">,</span>
          <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">default_data_dir</span><span class="p">,</span>
          <span class="n">num_splits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate a trained model on a specified dataset.</span>
@@ -1015,6 +1077,8 @@
 <span class="sd">            dataset_name [str]: name of the dataset to evaluate on</span>
 <span class="sd">            split [int]: index of the split to evaluate on</span>
 <span class="sd">            checkpoint_path [str]: path to the model checkpoint</span>
+<span class="sd">            download [bool]: whether to download the dataset</span>
+<span class="sd">            download_dir [str]: directory to download the dataset to</span>
 <span class="sd">            data_dir [str]: directory to save the prepared dataset to</span>
 <span class="sd">            num_splits [int]: number of splits to create</span>
 
@@ -1025,6 +1089,7 @@
     <span class="kn">import</span> <span class="nn">lightning</span> <span class="k">as</span> <span class="nn">L</span>
     <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">get_model</span>
     <span class="kn">from</span> <span class="nn">..datasets</span> <span class="kn">import</span> <span class="n">get_dataset</span>
+    <span class="kn">from</span> <span class="nn">..datasets</span> <span class="kn">import</span> <span class="n">prepare_dataset</span>
     <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
     <span class="kn">from</span> <span class="nn">..datasets</span> <span class="kn">import</span> <span class="n">get_dataset_split</span>
     <span class="kn">from</span> <span class="nn">..configs</span> <span class="kn">import</span> <span class="n">train_config</span><span class="p">,</span> <span class="n">dataset_config</span>
@@ -1032,6 +1097,9 @@
     <span class="n">L</span><span class="o">.</span><span class="n">seed_everything</span><span class="p">(</span><span class="n">train_config</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span> <span class="n">workers</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">dataset_name</span> <span class="ow">in</span> <span class="n">dataset_config</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Dataset </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s1"> not found in dataset_configs.yaml.&#39;</span>
+
+    <span class="k">if</span> <span class="n">download</span><span class="p">:</span>
+        <span class="n">prepare_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">download_dir</span><span class="o">=</span><span class="n">download_dir</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">L</span><span class="o">.</span><span class="n">LightningModule</span><span class="p">):</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">[</span><span class="n">dataset_name</span><span class="p">]</span><span class="o">.</span><span class="n">task</span><span class="p">)(</span><span class="n">model</span><span class="p">,</span>

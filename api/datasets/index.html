@@ -316,6 +316,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#bao.datasets.prepare_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      prepare_dataset
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#bao.datasets.get_dataset" class="md-nav__link">
     <span class="md-ellipsis">
       get_dataset
@@ -397,6 +406,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#bao.datasets.prepare_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      prepare_dataset
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#bao.datasets.get_dataset" class="md-nav__link">
     <span class="md-ellipsis">
       get_dataset
@@ -431,6 +449,212 @@
 
 <h1 id="get-dataset-functions">Get dataset functions</h1>
 
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="bao.datasets.prepare_dataset" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">bao</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">prepare_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">,</span> <span class="n">should_download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download_dir</span><span class="o">=</span><span class="s1">&#39;/tmp&#39;</span><span class="p">,</span> <span class="n">data_dir</span><span class="o">=</span><span class="n">default_data_dir</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents first">
+
+        <p>Download and prepare the dataset with the given name.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>dataset_name</code>
+            </td>
+            <td>
+                  <code>[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>name of the dataset to prepare</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>should_download</code>
+            </td>
+            <td>
+                  <code>[bool]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>whether to download the dataset</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>download_dir</code>
+            </td>
+            <td>
+                  <code>[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>directory to download the dataset to</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;/tmp&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>data_dir</code>
+            </td>
+            <td>
+                  <code>[str]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>directory to save the prepared dataset to</p>
+              </div>
+            </td>
+            <td>
+                  <code><span title="bao.configs.default_data_dir">default_data_dir</span></code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code>None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>None</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>bao/datasets/prepare.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">prepare_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                    <span class="n">should_download</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="n">download_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">,</span>
+                    <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">default_data_dir</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download and prepare the dataset with the given name.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dataset_name [str]: name of the dataset to prepare</span>
+<span class="sd">            should_download [bool]: whether to download the dataset</span>
+<span class="sd">            download_dir [str]: directory to download the dataset to</span>
+<span class="sd">            data_dir [str]: directory to save the prepared dataset to</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">prepare_utils</span>
+    <span class="kn">from</span> <span class="nn">.download</span> <span class="kn">import</span> <span class="n">download</span><span class="p">,</span> <span class="n">unzip</span>
+    <span class="kn">from</span> <span class="nn">..configs</span> <span class="kn">import</span> <span class="n">dataset_config</span><span class="p">,</span> <span class="n">default_data_dir</span>
+
+    <span class="k">assert</span> <span class="n">dataset_name</span> <span class="ow">in</span> <span class="n">dataset_config</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Dataset </span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s1"> not found in dataset_configs.yaml.&#39;</span>
+
+    <span class="n">download_url</span> <span class="o">=</span> <span class="n">dataset_config</span><span class="p">[</span><span class="n">dataset_name</span><span class="p">][</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">download_url</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">download_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">download_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s1">.zip&#39;</span><span class="p">)</span>
+        <span class="n">unziped_name</span> <span class="o">=</span> <span class="n">download_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.zip&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">should_download</span><span class="p">:</span>
+            <span class="n">download</span><span class="p">(</span><span class="n">dataset_config</span><span class="p">[</span><span class="n">dataset_name</span><span class="p">]</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">download_name</span><span class="p">)</span>
+            <span class="n">unzip</span><span class="p">(</span><span class="n">download_name</span><span class="p">,</span> <span class="n">unziped_name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">unziped_name</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">dataset_config</span><span class="p">[</span><span class="n">dataset_name</span><span class="p">]</span><span class="o">.</span><span class="n">url</span><span class="p">:</span>
+            <span class="n">url</span><span class="p">,</span> <span class="n">download_name</span> <span class="o">=</span> <span class="n">url</span>
+            <span class="n">download_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">download_dir</span><span class="p">,</span> <span class="n">download_name</span><span class="p">)</span>
+            <span class="n">unziped_n</span> <span class="o">=</span> <span class="n">download_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.zip&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">unziped_name</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unziped_n</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">should_download</span><span class="p">:</span>
+                <span class="n">download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">download_name</span><span class="p">)</span>
+                <span class="n">unzip</span><span class="p">(</span><span class="n">download_name</span><span class="p">,</span> <span class="n">unziped_n</span><span class="p">)</span>
+
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s1">.h5&#39;</span><span class="p">)</span>
+    <span class="n">prepare_func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">prepare_utils</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;prepare_</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">prepare_func</span><span class="p">(</span><span class="n">unziped_name</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 <div class="doc doc-object doc-function">
 

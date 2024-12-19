@@ -268,9 +268,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#training-a-model" class="md-nav__link">
+  <a href="#training-and-evaluating-a-model" class="md-nav__link">
     <span class="md-ellipsis">
-      Training a model
+      Training and evaluating a model
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-dataset-to-bao" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding a new dataset to Bao
     </span>
   </a>
   
@@ -404,9 +413,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#training-a-model" class="md-nav__link">
+  <a href="#training-and-evaluating-a-model" class="md-nav__link">
     <span class="md-ellipsis">
-      Training a model
+      Training and evaluating a model
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-dataset-to-bao" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding a new dataset to Bao
     </span>
   </a>
   
@@ -429,181 +447,48 @@
 
 <h1 id="benchmark-and-analysis-of-organoids">Benchmark and analysis of organoids</h1>
 <h2 id="handling-the-data">Handling the data</h2>
+<p>The <code>bao.datasets</code> subpackage handles everything relative to the supported datasets in the Bao package.</p>
 <p>The <strong><code>bao.datasets.prepare_dataset</code></strong> function downloads the specified dataset and preprocesses it in the desired format. The name of the dataset should correspond to the name given in <code>configs/dataset_config.yaml</code>.</p>
-<table>
-<thead>
-<tr>
-<th> Argument</th>
-<th>Type</th>
-<th>Description</th>
-<th> Default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>dataset_name</td>
-<td>str</td>
-<td>name of the dataset to prepare</td>
-<td></td>
-</tr>
-<tr>
-<td>should_download</td>
-<td>bool</td>
-<td>whether to download the dataset</td>
-<td>True</td>
-</tr>
-<tr>
-<td>download_dir</td>
-<td>str</td>
-<td>directory to download the dataset to</td>
-<td>'/tmp'</td>
-</tr>
-<tr>
-<td>data_dir</td>
-<td>str</td>
-<td>directory to save the prepared dataset to</td>
-<td>'data'</td>
-</tr>
-</tbody>
-</table>
 <pre><code class="language-python">import bao
-bao.datasets.prepare_dataset(dataset_name='orgasegment')
+
+bao.datasets.prepare_dataset('tellu')
 </code></pre>
-<p>The <strong><code>bao.datasets.get_dataset_split</code></strong> function splits the dataset into train, validation and testing given the number of splits and the desired split in a deterministic fashion.</p>
-<table>
-<thead>
-<tr>
-<th> Argument</th>
-<th>Type</th>
-<th>Description</th>
-<th> Default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>dataset_name</td>
-<td>str</td>
-<td>name of the dataset to prepare</td>
-<td></td>
-</tr>
-<tr>
-<td>split</td>
-<td>int</td>
-<td>index of the split to get</td>
-<td></td>
-</tr>
-<tr>
-<td>num_splits</td>
-<td>int</td>
-<td>number of splits to create</td>
-<td>4</td>
-</tr>
-<tr>
-<td>data_dir</td>
-<td>str</td>
-<td>directory to save the prepared dataset to </td>
-<td>'data'</td>
-</tr>
-<tr>
-<td>seed</td>
-<td>int</td>
-<td>seed for the random number generator</td>
-<td>0</td>
-</tr>
-</tbody>
-</table>
+<p>The <code>bao.datasets.get_dataset_split</code> function splits the samples into train and validation in a deterministic manner (given the seed), and returns test sample names if there is a predefined test set in the original dataset. This assumes that the dataset has already been downloaded and prepared, and is present in the directory given in data_dir (<code>data</code> by default).</p>
 <pre><code class="language-python">import bao
-train_names, val_names, test_names = bao.datasets.get_dataset_split(dataset_name='orgasegment', split=0, num_splits=4)
+
+train_names, val_names, test_names = bao.datasets.get_dataset_split(dataset_name='tellu',
+                                                                    split=0,
+                                                                    num_splits=4)
 </code></pre>
-<p>The <strong><code>bao.datasets.get_dataset</code></strong> function allows to have access to the dataset classes. Note that the mode given to the dataset should be 'train' for the training and validation set.</p>
-<table>
-<thead>
-<tr>
-<th> Argument</th>
-<th>Type</th>
-<th>Description</th>
-<th> Default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>task</td>
-<td>str</td>
-<td>task of the dataset (e.g., classification, segmentation)</td>
-<td></td>
-</tr>
-<tr>
-<td>data_dir</td>
-<td>str</td>
-<td>directory to the saved dataset</td>
-<td>'data'</td>
-</tr>
-<tr>
-<td>kwargs</td>
-<td></td>
-<td>arguments to pass to the dataset (names, mode, img_size)</td>
-<td></td>
-</tr>
-</tbody>
-</table>
+<p>The <code>bao.datasets.get_dataset</code> function gives access to the specific dataset classes and initializes it.</p>
 <pre><code class="language-python">import bao
-train_names, _, _ = bao.datasets.get_dataset_split(dataset_name='orgasegment', split=0, num_splits=4)
-train_dataset = bao.datasets.get_dataset(task='segmentation', names=train_names, mode='train', img_size=(128, 128))
+
+train_names, _, _ = bao.datasets.get_dataset_split(dataset_name='tellu',
+                                                   split=0,
+                                                   num_splits=4)
+train_dataset = bao.datasets.get_dataset(name='tellu',
+                                         names=train_names,
+                                         download=False, # has already been downloaded above
+                                         mode='train', # mode should be train for train and val
+                                         img_size=(1024, 1024))
 </code></pre>
-<h2 id="training-a-model">Training a model</h2>
-<p>The <strong><code>bao.train</code></strong> function is a packaged way of training your model. This can be done either by:
+<p>All speicific dataset classes are also directly accessible.</p>
+<pre><code class="language-python">import bao
+
+train_names, _, _ = bao.datasets.get_dataset_split(dataset_name='tellu',
+                                                   split=0,
+                                                   num_splits=4)
+train_dataset = bao.datasets.Tellu(names=train_names
+                                   mode='train',
+                                   img_size=(1024, 1024),
+                                   download=False)
+</code></pre>
+<h2 id="training-and-evaluating-a-model">Training and evaluating a model</h2>
+<p>The <code>bao.train</code> function is a packaged way of training your model. This can be done either by:
 - defining your <code>torch.nn.Module</code> model, which should output only the tensor output (i.e., no dictionary)
-- defining your <code>lightning.LightningModule</code> model, for which you can define your own losses (make sure to log at least 'train/loss' and 'val/loss', and optionally 'train/metric' and 'val/metric')</p>
+- defining your <code>lightning.LightningModule</code> model, for which you can define your own losses (make sure to log at least 'train/loss' and 'val/loss')</p>
 <p>The default hyperparameters for training are all defined in <code>configs/train_config.yaml</code>, if you wish to modify or add some hyperparameters, you may do so with the **kwargs.</p>
 <p><strong>Note</strong>: if you prefer to train a model using your own pipeline, you can always use the dataset classes defined above with your own pipeline.</p>
-<table>
-<thead>
-<tr>
-<th> Argument</th>
-<th>Type</th>
-<th>Description</th>
-<th> Default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>model</td>
-<td>torch.nn.Module or lightning.LightningModule</td>
-<td>model to train</td>
-<td></td>
-</tr>
-<tr>
-<td>dataset_name</td>
-<td>str</td>
-<td>name of the dataset to train on</td>
-<td></td>
-</tr>
-<tr>
-<td>split</td>
-<td>int</td>
-<td>index of the split to train on</td>
-<td></td>
-</tr>
-<tr>
-<td>data_dir</td>
-<td>str</td>
-<td>directory to save the prepared dataset to</td>
-<td>'data'</td>
-</tr>
-<tr>
-<td>num_splits</td>
-<td>int</td>
-<td>number of splits to create</td>
-<td>4</td>
-</tr>
-<tr>
-<td>kwargs</td>
-<td></td>
-<td>additional arguments to update the training configuration</td>
-<td></td>
-</tr>
-</tbody>
-</table>
 <pre><code class="language-python">import bao
 import torch
 import torchvision
@@ -619,7 +504,7 @@ model = WrapperModel(torchvision.models.segmentation.deeplabv3_resnet50(num_clas
 # train the model
 bao.train(model, dataset_name='orgasegment', split=0, batch_size=8, optimizer_params={'lr': 0.01, 'weight_decay': 0.001})
 </code></pre>
-<p>As mentionned above, it is also possible to provide a <code>lightning.LightningModule</code> class to the model, in order to customize the training.</p>
+<p>The similar code works, providing a Lightning.LightningModule as input.</p>
 <pre><code class="language-python">import bao
 import torch
 import torchvision
@@ -653,8 +538,33 @@ class CustomLightning(L.LightningModule):
 
 # train the model
 model = CustomLightning()
-bao.train(model, dataset_name='dcrypto_budding', split=0)
+bao.train(model, dataset_name='dcrypto_budding', split=0, download=True)
 </code></pre>
+<p>The <code>bao.eval</code> function evaluates a trained model on a specified dataset (which is already done at the end of the training), on the test set if one is present, or on the validation set. Similarly to <code>bao.train</code>, it can be applied on a <code>torch.nn.Module</code> or on a <code>lightning.LightningModule</code>.</p>
+<pre><code class="language-python">import bao
+
+model = WrapperModel(torchvision.models.segmentation.deeplabv3_resnet50(num_classes=1))
+bao.eval(model, dataset_name='dcrypto_budding', split=0, download=False, checkpoint_path='/path/to/model.ckpt')
+</code></pre>
+<h2 id="adding-a-new-dataset-to-bao">Adding a new dataset to Bao</h2>
+<p>If a new open-source dataset has come out, feel free to add your implementation and create a pull request. Here are the steps necessary to handle a new dataset.</p>
+<ol>
+<li>
+<p>Add the necessary information in <code>bao/configs/dataset_config.yaml</code> (download link, name, type of task, image size, number of classes).</p>
+</li>
+<li>
+<p>Create a function called <code>prepare_&lt;dataset_name&gt;</code> in <code>bao/datasets/prepare_utils.py</code>, which should create a .h5 file with the following structure for the train set (and same for <code>test</code> if there is a predefined test set).</p>
+<ul>
+<li>classification: <code>train/cls1</code>, <code>train/cls2</code>, ...</li>
+<li>segmentation: <code>train/images</code> and <code>train/masks</code></li>
+<li>detection: <code>train/images</code> and <code>train/labels</code> containing ([cls, start_x, start_y, end_x, end_y] arrays for the labels)</li>
+<li>localization: <code>train/images</code> and <code>train/labels</code> containing ([start_x, start_y, end_x, end_y] arrays for the labels)</li>
+</ul>
+</li>
+<li>
+<p>Create the specific dataset class (e.g. if the dataset is for segmentation, in <code>bao/datasets/segmentation_datasets.py</code> which inherits from <code>SegmentationDataset</code>), and import it in <code>bao/configs/__init__.py</code>.</p>
+</li>
+</ol>
 
 
 
