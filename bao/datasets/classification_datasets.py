@@ -21,7 +21,7 @@ class ClassificationDataset(Dataset):
             Args:
                 dataset_name [str]: name of the dataset to prepare
                 names [list]: list of image names
-                mode [str]: mode of the dataset (train, test)
+                mode [str]: mode of the dataset in (train, test), should be train for train and val
                 img_size [tuple]: size of the images
                 data_dir [str]: directory to save the prepared dataset to
         """
@@ -53,11 +53,12 @@ class DCryptOBudding(ClassificationDataset):
                  download: bool,
                  download_dir: str = '/tmp',
                  data_dir: str = default_data_dir):
-        """Prepare the D-CryptO budding dataset.
+        """Prepare the D-CryptO dataset for the budding vs non-budding classification task.\nOriginal paper available at
+        [https://arxiv.org/abs/2210.06538](https://arxiv.org/abs/2210.06538){:target="_blank"}.
 
             Args:
                 names [list]: list of image names
-                mode [str]: mode of the dataset (train, test)
+                mode [str]: mode of the dataset in (train, test), should be train for train and val
                 img_size [tuple]: size of the images
                 download [bool]: whether to download the dataset
                 download_dir [str]: directory to download the dataset to
@@ -75,11 +76,12 @@ class DCryptOOpaque(ClassificationDataset):
                  download: bool,
                  download_dir: str = '/tmp',
                  data_dir: str = default_data_dir):
-        """Prepare the D-CryptO opaque dataset.
+        """Prepare the D-CryptO dataset for the opaque vs transparent classification task.\nOriginal paper available at
+        [https://arxiv.org/abs/2210.06538](https://arxiv.org/abs/2210.06538){:target="_blank"}.
 
             Args:
                 names [list]: list of image names
-                mode [str]: mode of the dataset (train, test)
+                mode [str]: mode of the dataset in (train, test), should be train for train and val
                 img_size [tuple]: size of the images
                 download [bool]: whether to download the dataset
                 download_dir [str]: directory to download the dataset to

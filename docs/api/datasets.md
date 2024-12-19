@@ -1,8 +1,10 @@
-# Datasets
+# Get dataset functions
 
 ::: bao.datasets.get_dataset
 
 ::: bao.datasets.get_dataset_split
+
+# Dataset classes
 
 ::: bao.datasets.OrgaSegment
 

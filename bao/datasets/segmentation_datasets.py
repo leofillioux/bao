@@ -20,7 +20,7 @@ class SegmentationDataset(Dataset):
             Args:
                 dataset_name [str]: name of the dataset to prepare
                 names [list]: list of image names
-                mode [str]: mode of the dataset (train, test)
+                mode [str]: mode of the dataset in (train, test), should be train for train and val
                 img_size [tuple]: size of the images
                 data_dir [str]: directory to save the prepared dataset to
         """
@@ -49,11 +49,12 @@ class OrgaSegment(SegmentationDataset):
                  download: bool,
                  download_dir: str = '/tmp',
                  data_dir: str = default_data_dir):
-        """Initialize the OrgaSegment dataset.
+        """Initialize the OrgaSegment dataset for segmentation.\nOriginal paper available at
+        [https://www.nature.com/articles/s42003-024-05966-4](https://www.nature.com/articles/s42003-024-05966-4){:target="_blank"}.
             
             Args:
                 names [list]: list of image names
-                mode [str]: mode of the dataset (train, test)
+                mode [str]: mode of the dataset in (train, test), should be train for train and val
                 img_size [tuple]: size of the images
                 download [bool]: whether to download the dataset
                 download_dir [str]: directory to download the dataset to
@@ -71,11 +72,12 @@ class OrgaExtractor(SegmentationDataset):
                  download: bool,
                  download_dir: str = '/tmp',
                  data_dir: str = default_data_dir):
-        """Initialize the OrgaExtractor dataset.
+        """Initialize the OrgaExtractor dataset for segmentation.\nOriginal paper available at
+        [https://www.nature.com/articles/s41598-023-46485-2](https://www.nature.com/articles/s41598-023-46485-2){:target="_blank"}.
                 
                 Args:
                     names [list]: list of image names
-                    mode [str]: mode of the dataset (train, test)
+                    mode [str]: mode of the dataset in (train, test), should be train for train and val
                     img_size [tuple]: size of the images
                     download [bool]: whether to download the dataset
                     download_dir [str]: directory to download the dataset to

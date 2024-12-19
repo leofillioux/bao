@@ -6,7 +6,7 @@ def eval(model: Module,
          split: int,
          checkpoint_path: str,
          data_dir: str = default_data_dir,
-         num_splits: int = 4):
+         num_splits: int = 4) -> None:
     """Evaluate a trained model on a specified dataset.
         
         Args:

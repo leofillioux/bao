@@ -20,7 +20,7 @@ class DetectionDataset(Dataset):
             Args:
                 dataset_name [str]: name of the dataset to prepare
                 names [list]: list of image names
-                mode [str]: mode of the dataset (train, test)
+                mode [str]: mode of the dataset in (train, test), should be train for train and val
                 img_size [tuple]: size of the images
                 predict_classes [bool]: whether to predict classes (False for localization, True for detection)
                 data_dir [str]: directory to save the prepared dataset to
@@ -68,11 +68,12 @@ class Tellu(DetectionDataset):
                  download: bool,
                  download_dir: str = '/tmp',
                  data_dir: str = default_data_dir):
-        """Initialize the Tellu dataset (detection).
+        """Initialize the Tellu dataset for detection.\nOriginal paper available at
+        [https://journals.biologists.com/dmm/article/16/3/dmm049756/297124/Tellu-an-object-detector-algorithm-for-automatic](https://journals.biologists.com/dmm/article/16/3/dmm049756/297124/Tellu-an-object-detector-algorithm-for-automatic){:target="_blank"}
 
             Args:
                 names [list]: list of image names
-                mode [str]: mode of the dataset (train, test)
+                mode [str]: mode of the dataset in (train, test), should be train for train and val
                 img_size [tuple]: size of the images
                 download [bool]: whether to download the dataset
                 download_dir [str]: directory to download the dataset to
@@ -90,11 +91,12 @@ class OrgaQuant(DetectionDataset):
                  download: bool,
                  download_dir: str = '/tmp',
                  data_dir: str = default_data_dir):
-        """Initialize the OrgaQuant dataset (localization).
+        """Initialize the OrgaQuant dataset for localization.\nOriginal paper available at
+        [https://www.nature.com/articles/s41598-019-48874-y](https://www.nature.com/articles/s41598-019-48874-y){:target="_blank"}
 
             Args:
                 names [list]: list of image names
-                mode [str]: mode of the dataset (train, test)
+                mode [str]: mode of the dataset in (train, test), should be train for train and val
                 img_size [tuple]: size of the images
                 download [bool]: whether to download the dataset
                 download_dir [str]: directory to download the dataset to
@@ -112,11 +114,12 @@ class MultiOrg(DetectionDataset):
                  download: bool,
                  download_dir: str = '/tmp',
                  data_dir: str = default_data_dir):
-        """Initialize the MultiOrg dataset (localization).
+        """Initialize the MultiOrg dataset for localization.\nOriginal paper available at
+        [https://arxiv.org/abs/2410.14612](https://arxiv.org/abs/2410.14612){:target="_blank"}
 
             Args:
                 names [list]: list of image names
-                mode [str]: mode of the dataset (train, test)
+                mode [str]: mode of the dataset in (train, test), should be train for train and val
                 img_size [tuple]: size of the images
                 download [bool]: whether to download the dataset
                 download_dir [str]: directory to download the dataset to

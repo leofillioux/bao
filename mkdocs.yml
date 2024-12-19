@@ -6,6 +6,8 @@ nav:
     - 'Datasets': api/datasets.md
     - 'Train': api/train.md
 theme: material
+markdown_extensions:
+  - attr_list
 plugins:
   - search
   - mkdocstrings:
