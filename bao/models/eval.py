@@ -5,6 +5,8 @@ def eval(model: Module,
          dataset_name: str,
          split: int,
          checkpoint_path: str,
+         download: bool,
+         download_dir: str = '/tmp',
          data_dir: str = default_data_dir,
          num_splits: int = 4) -> None:
     """Evaluate a trained model on a specified dataset.
@@ -14,6 +16,8 @@ def eval(model: Module,
             dataset_name [str]: name of the dataset to evaluate on
             split [int]: index of the split to evaluate on
             checkpoint_path [str]: path to the model checkpoint
+            download [bool]: whether to download the dataset
+            download_dir [str]: directory to download the dataset to
             data_dir [str]: directory to save the prepared dataset to
             num_splits [int]: number of splits to create
         
@@ -24,6 +28,7 @@ def eval(model: Module,
     import lightning as L
     from .models import get_model
     from ..datasets import get_dataset
+    from ..datasets import prepare_dataset
     from torch.utils.data import DataLoader
     from ..datasets import get_dataset_split
     from ..configs import train_config, dataset_config
@@ -31,6 +36,9 @@ def eval(model: Module,
     L.seed_everything(train_config.seed, workers=True)
 
     assert dataset_name in dataset_config, f'Dataset {dataset_name} not found in dataset_configs.yaml.'
+
+    if download:
+        prepare_dataset(dataset_name=dataset_name, download_dir=download_dir, data_dir=data_dir)
 
     if not isinstance(model, L.LightningModule):
         model = get_model(dataset_config[dataset_name].task)(model,

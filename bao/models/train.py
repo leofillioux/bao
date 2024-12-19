@@ -5,6 +5,7 @@ def train(model: Module,
           dataset_name: str,
           split: int,
           download: bool,
+          download_dir: str = '/tmp',
           data_dir: str = default_data_dir,
           num_splits: int = 4,
           **kwargs) -> None:
@@ -14,6 +15,7 @@ def train(model: Module,
             model [torch.nn.Module | L.LightningModule]: model to train
             dataset_name [str]: name of the dataset to train on
             split [int]: index of the split to train on
+            download_dir [str]: directory to download the dataset to
             download [bool]: whether to download the dataset
             data_dir [str]: directory to save the prepared dataset to
             num_splits [int]: number of splits to create
@@ -30,7 +32,7 @@ def train(model: Module,
     from torch.utils.data import DataLoader
     from .train_utils import update_easydict
     from ..datasets import get_dataset
-    from ..datasets.prepare import prepare_dataset
+    from ..datasets import prepare_dataset
     from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint
 
     updated_train_config = update_easydict(train_config, kwargs)
@@ -40,13 +42,13 @@ def train(model: Module,
 
     if not isinstance(model, L.LightningModule):
         model = get_model(dataset_config[dataset_name].task)(model,
-                                                            updated_train_config.optimizer,
-                                                            updated_train_config.optimizer_params,
-                                                            dataset_config[dataset_name].num_classes)
+                                                             updated_train_config.optimizer,
+                                                             updated_train_config.optimizer_params,
+                                                             dataset_config[dataset_name].num_classes)
     
     img_size = dataset_config[dataset_name].size
     if download:
-        prepare_dataset(dataset_name=dataset_name, download_dir=data_dir, data_dir=data_dir)
+        prepare_dataset(dataset_name=dataset_name, download_dir=download_dir, data_dir=data_dir)
     train_names, val_names, test_names = get_dataset_split(dataset_name=dataset_name,
                                                            split=split,
                                                            num_splits=num_splits,

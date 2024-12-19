@@ -1,12 +1,12 @@
-<p align="left">
-  <img src="docs/assets/logo.png" alt="bao logo" width="20%"/>
+<p align="center">
+  <img src="docs/assets/logo.png" alt="bao logo" width="30%"/>
 </p>
 
 # Benchmark and analysis of organoids
 TODO: have a benchmark here, as well as a small description of the datasets.
 
 ## Documentation
-Check Bao's documentation (TODO put link here) to get started.
+Check [Bao's documentation](https://leofillioux.github.io/bao/) to get started.
 
 ## Installation
 Bao can be installed using `pip`for `python>=3.10`.
@@ -45,7 +45,7 @@ class WrapperModel(torch.nn.Module):
 model = WrapperModel(torchvision.models.segmentation.deeplabv3_resnet50(num_classes=1))
 
 # train the model
-bao.train(model, dataset_name='orgasegment', split=0)
+bao.train(model, dataset_name='orgasegment', split=0, download=False)
 ```
 
 The `bao.eval` function allows the user to evaluate a trained model on the desired dataset.
@@ -53,7 +53,7 @@ The `bao.eval` function allows the user to evaluate a trained model on the desir
 import bao
 
 model = WrapperModel(torchvision.models.segmentation.deeplabv3_resnet50(num_classes=1))
-bao.eval(model, dataset_name='orgasegment', split=0, checkpoint_path='/path/to/model.ckpt')
+bao.eval(model, dataset_name='orgasegment', split=0, download=False, checkpoint_path='/path/to/model.ckpt')
 ```
 
 More tutorials are given here (TODO: make notebooks to show different types of models, and different functionalities).
