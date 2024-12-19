@@ -1,3 +1,3 @@
 # Prepare Dataset
 
-::: bao.train.train.train
+::: bao.train

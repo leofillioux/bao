@@ -1,3 +1,7 @@
+<p align="left">
+  <img src="docs/assets/logo.png" alt="bao logo" width="20%"/>
+</p>
+
 # Benchmark and analysis of organoids
 TODO: have a benchmark here, as well as a small description of the datasets.
 

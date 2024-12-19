@@ -1,3 +1,3 @@
 from . import datasets
-from .train.train import train
-from .train.eval import eval
+from .models.train import train
+from .models.eval import eval
