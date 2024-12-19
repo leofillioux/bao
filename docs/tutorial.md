@@ -119,10 +119,13 @@ bao.eval(model, dataset_name='dcrypto_budding', split=0, download=False, checkpo
 
 ## Adding a new dataset to Bao
 If a new open-source dataset has come out, feel free to add your implementation and create a pull request. Here are the steps necessary to handle a new dataset.
+
 1. Add the necessary information in `bao/configs/dataset_config.yaml` (download link, name, type of task, image size, number of classes).
+
 2. Create a function called `prepare_<dataset_name>` in `bao/datasets/prepare_utils.py`, which should create a .h5 file with the following structure for the train set (and same for `test` if there is a predefined test set).
     - classification: `train/cls1`, `train/cls2`, ...
     - segmentation: `train/images` and `train/masks`
     - detection: `train/images` and `train/labels` containing ([cls, start_x, start_y, end_x, end_y] arrays for the labels)
     - localization: `train/images` and `train/labels` containing ([start_x, start_y, end_x, end_y] arrays for the labels)
+    
 3. Create the specific dataset class (e.g. if the dataset is for segmentation, in `bao/datasets/segmentation_datasets.py` which inherits from `SegmentationDataset`), and import it in `bao/configs/__init__.py`.
