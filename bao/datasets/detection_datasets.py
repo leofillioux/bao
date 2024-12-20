@@ -55,7 +55,7 @@ class DetectionDataset(Dataset):
                 label = {'boxes': torch.as_tensor(np.array(np.zeros((0, 4)), dtype=float)),
                          'labels': torch.as_tensor(np.array([], dtype=int), dtype=torch.int64)}
 
-        size_augmentation = np.array([w_ratio, h_ratio, w_ratio, h_ratio]).reshape(1, -1)
+        size_augmentation = np.array([h_ratio, w_ratio, h_ratio, w_ratio]).reshape(1, -1)
         label['boxes'] *= size_augmentation
 
         return img, label

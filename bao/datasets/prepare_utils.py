@@ -143,7 +143,7 @@ def prepare_tellu(in_dir: str,
                 if any(start_x == end_x) or any(start_y == end_y):
                     continue
 
-                lbl = np.stack([cls, start_x, start_y, end_x, end_y]).T
+                lbl = np.stack([cls+1, start_x, start_y, end_x, end_y]).T
                 
                 img_group.create_dataset(img_name, data=img)
                 lbl_group.create_dataset(img_name, data=lbl)
