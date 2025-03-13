@@ -3,8 +3,6 @@ import torch
 import torchmetrics
 import lightning as L
 import torch.nn as nn
-import torch.nn.functional as F
-import matplotlib.pyplot as plt
 from torch import optim
 from . import train_utils
 
@@ -140,34 +138,6 @@ class SegmentationModel(L.LightningModule):
         self.log('val/loss', loss, on_epoch=True, on_step=False, prog_bar=True)
         self.log('val/metric_dice', metric, on_epoch=True, on_step=False, prog_bar=True)
         return loss
-
-    def on_fit_end(self):
-        self.__class__.load_from_checkpoint(self.trainer.checkpoint_callback.best_model_path)
-        self.model.eval()
-
-        for images, masks in self.trainer.val_dataloaders:
-            for idx in range(len(images)):
-                image, mask = images[idx], masks[idx]
-                img_tensor = image.unsqueeze(0).to(self.device)
-                with torch.no_grad():
-                    pred_mask = self(img_tensor)
-                pred_mask = pred_mask.squeeze().cpu().numpy() > 0.5
-                true_mask = mask.squeeze().numpy()
-
-                fig, axs = plt.subplots(1, 3, figsize=(12, 4))
-                axs[0].imshow((image.permute(1, 2, 0).cpu().numpy()*255.).astype(int))
-                axs[0].set_title('Input Image')
-                axs[0].axis('off')
-                axs[1].imshow(true_mask, cmap='gray')
-                axs[1].set_title('True Mask')
-                axs[1].axis('off')
-                axs[2].imshow(pred_mask, cmap='gray')
-                axs[2].set_title('Predicted Mask')
-                axs[2].axis('off')
-                plt.tight_layout()
-                plt.savefig(os.path.join(self.trainer.checkpoint_callback.best_model_path.rsplit('/', 1)[0], f'val_{idx}.png'))
-                plt.show()
-            break
     
     def configure_optimizers(self):
         return getattr(optim, self._optimizer_name)(self.parameters(), **self._optimizer_params)

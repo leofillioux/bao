@@ -40,9 +40,8 @@ class DetectionDataset(Dataset):
             lbl = np.array(hdf.get(os.path.join(self.mode, 'labels', self.names[idx])))
         pre_w, pre_h = img.shape[-2], img.shape[-1]
         img = self.preprocess_img(img)
-        post_w, post_h = img.shape[-2], img.shape[-1]
-        w_ratio = post_w / pre_w
-        h_ratio = post_h / pre_h
+        w_ratio = 1 / pre_w
+        h_ratio = 1 / pre_h
 
         if self.predict_classes:
             label = {'boxes': torch.tensor(lbl[:, 1:]),
