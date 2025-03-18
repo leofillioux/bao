@@ -18,7 +18,7 @@ def prepare_dataset(dataset_name: str,
     """
     from . import prepare_utils
     from .download import download, unzip
-    from ..configs import dataset_config, default_data_dir
+    from ..configs import dataset_config
 
     assert dataset_name in dataset_config, f'Dataset {dataset_name} not found in dataset_configs.yaml.'
 

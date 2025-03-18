@@ -176,7 +176,7 @@ def prepare_orgaextractor(in_dirs: str,
                                             leave=False):
                 img_name = os.path.splitext(os.path.basename(img_path))[0]
                 img = np.array(Image.open(img_path).convert('L'))
-                mask = np.array(Image.open(mask_path).convert('L'))
+                mask = np.array(Image.open(mask_path).convert('L')) > 0.5
                 img_group.create_dataset(img_name, data=img)
                 mask_group.create_dataset(img_name, data=mask)
 
@@ -296,7 +296,7 @@ def prepare_multiorg(in_dir: str,
             group = hdf.create_group(split)
             img_group = group.create_group('images')
             lbl_group = group.create_group('labels')
-            images = [path for path in Path(os.path.join(in_dir, split)).rglob('*.tiff')]
+            images = [path for path in Path(os.path.join(in_dir, 'multiorg', split)).rglob('*.tiff')]
             labels = list(map(get_corresponding_json, images))
 
             for img_path, lbl_path in tqdm(zip(images, labels),
