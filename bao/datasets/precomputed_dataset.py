@@ -4,9 +4,9 @@ from torch.utils.data import Dataset
 
 class PrecomputedDataset(Dataset):
     def __init__(self, dataset, model):
-        self.model = model
-        self.dataset = dataset
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.dataset = dataset
+        self.model = model.to(device)
         self.features = []
         self.labels = []
         for x, y in tqdm(self.dataset, desc='Precomputing dataset'):

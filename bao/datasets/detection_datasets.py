@@ -39,6 +39,7 @@ class DetectionDataset(Dataset):
             img = np.array(hdf.get(os.path.join(self.mode, 'images', self.names[idx])))
             lbl = np.array(hdf.get(os.path.join(self.mode, 'labels', self.names[idx])))
         pre_w, pre_h = img.shape[-2], img.shape[-1]
+        img = img / img.max()
         img = self.preprocess_img(img)
         w_ratio = 1 / pre_w
         h_ratio = 1 / pre_h

@@ -72,9 +72,9 @@ def train(model: Module,
                                img_size=img_size) if test_names is not None else None
     
     if precomputed:
-        train_dataset = PrecomputedDataset(train_dataset, model)
-        val_dataset = PrecomputedDataset(val_dataset, model)
-        test_dataset = PrecomputedDataset(test_dataset, model)
+       train_dataset = PrecomputedDataset(train_dataset, model)
+       val_dataset = PrecomputedDataset(val_dataset, model)
+       test_dataset = PrecomputedDataset(test_dataset, model)
 
     model = get_model(dataset_config[dataset_name].task)(model,
                                                          updated_train_config.optimizer,
@@ -115,3 +115,4 @@ def train(model: Module,
     trainer.validate(model,
                      test_dataloader if test_names is not None else val_dataloader,
                      ckpt_path=model_checkpoint.best_model_path)
+    return trainer.callback_metrics

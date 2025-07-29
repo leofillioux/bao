@@ -286,8 +286,8 @@ def prepare_multiorg(in_dir: str,
         lbl = []
         for key in label:
             corners = np.array(label[key])
-            start_x, start_y = corners.min(0)
-            end_x, end_y = corners.max(0)
+            start_y, start_x = corners.min(0)
+            end_y, end_x = corners.max(0)
             lbl.append([start_x, start_y, end_x, end_y])
         return np.array(lbl)
 
@@ -304,7 +304,7 @@ def prepare_multiorg(in_dir: str,
                                            total=len(images),
                                            leave=False):
                 img_name = '_'.join(os.path.dirname(img_path).split('/')[-3:])
-                img = np.array(Image.open(img_path).convert('L'))
+                img = np.array(Image.open(img_path))
                 with open(lbl_path, 'r') as f:
                     lbl = json.load(f)
                 lbl = preprocess_label(lbl)
