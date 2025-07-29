@@ -8,6 +8,7 @@ def train(model: Module,
           download_dir: str = '/tmp',
           data_dir: str = default_data_dir,
           num_splits: int = 4,
+          precomputed: bool = False,
           **kwargs) -> None:
     """Train a model on a specified dataset.
         
@@ -19,6 +20,7 @@ def train(model: Module,
             download [bool]: whether to download the dataset
             data_dir [str]: directory to save the prepared dataset to
             num_splits [int]: number of splits to create
+            precomputed [bool]: whether to precompute the dataset
             kwargs: additional arguments to update the training configuration
         
         Returns:
@@ -33,18 +35,13 @@ def train(model: Module,
     from .train_utils import update_easydict
     from ..datasets import get_dataset
     from ..datasets import prepare_dataset
+    from ..datasets import PrecomputedDataset
     from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint
 
     updated_train_config = update_easydict(train_config, kwargs)
     L.seed_everything(updated_train_config.seed, workers=True)
 
     assert dataset_name in dataset_config, f'Dataset {dataset_name} not found in dataset_configs.yaml.'
-
-    if not isinstance(model, L.LightningModule):
-        model = get_model(dataset_config[dataset_name].task)(model,
-                                                             updated_train_config.optimizer,
-                                                             updated_train_config.optimizer_params,
-                                                             dataset_config[dataset_name].num_classes)
     
     img_size = dataset_config[dataset_name].size
     if download:
@@ -73,6 +70,17 @@ def train(model: Module,
                                download=False,
                                mode='test',
                                img_size=img_size) if test_names is not None else None
+    
+    if precomputed:
+        train_dataset = PrecomputedDataset(train_dataset, model)
+        val_dataset = PrecomputedDataset(val_dataset, model)
+        test_dataset = PrecomputedDataset(test_dataset, model)
+
+    model = get_model(dataset_config[dataset_name].task)(model,
+                                                         updated_train_config.optimizer,
+                                                         updated_train_config.optimizer_params,
+                                                         dataset_config[dataset_name].num_classes,
+                                                         precomputed)
         
     collate_fn = getattr(model, 'collate_fn', None)
     train_dataloader = DataLoader(train_dataset,

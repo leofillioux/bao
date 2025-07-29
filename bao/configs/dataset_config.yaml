@@ -19,13 +19,13 @@ orgasegment:
 dcrypto_budding:
   url: https://osf.io/download/gdycz/
   task: classification
-  size: [128, 128]
+  size: [224, 224]
   num_classes: 2
 
 dcrypto_opaque:
   url: https://osf.io/download/g9edt/
   task: classification
-  size: [128, 128]
+  size: [224, 224]
   num_classes: 2
 
 orgaextractor:

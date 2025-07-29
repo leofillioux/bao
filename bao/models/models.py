@@ -29,7 +29,8 @@ class ClassificationModel(L.LightningModule):
                  model: torch.nn.Module,
                  optimizer_name: str,
                  optimizer_params: dict,
-                 num_classes: int = 2):
+                 num_classes: int = 2,
+                 precomputed: bool = False):
         super(ClassificationModel, self).__init__()
         self.save_hyperparameters(ignore=['model'])
         self.model = model
@@ -40,11 +41,11 @@ class ClassificationModel(L.LightningModule):
         if num_classes == 2:
             self.metric_f1 = torchmetrics.F1Score(task='binary')
             self.metric_auc = torchmetrics.AUROC(task='binary')
-            self.model = nn.Sequential(self.model, nn.LazyLinear(1))
+            self.model = nn.Sequential(nn.Identity() if precomputed else self.model, nn.LazyLinear(1), nn.Sigmoid())
         else:
             self.metric_f1 = torchmetrics.F1Score(task='multiclass', num_classes=num_classes)
             self.metric_auc = torchmetrics.AUROC(task='multiclass', num_classes=num_classes)
-            self.model = nn.Sequential(self.model, nn.LazyLinear(num_classes))
+            self.model = nn.Sequential(nn.Identity() if precomputed else self.model, nn.LazyLinear(num_classes), nn.Softmax(dim=1))
 
     def on_train_epoch_start(self):
         self.train_labels = []
@@ -106,7 +107,8 @@ class SegmentationModel(L.LightningModule):
                  model: torch.nn.Module,
                  optimizer_name: str,
                  optimizer_params: dict,
-                 num_classes: int = None):
+                 num_classes: int = None,
+                 precomputed: bool = False):
         super(SegmentationModel, self).__init__()
         self.save_hyperparameters(ignore=['model'])
         self.model = model
@@ -147,7 +149,8 @@ class DetectionModel(L.LightningModule):
                  model: torch.nn.Module,
                  optimizer_name: str,
                  optimizer_params: dict,
-                 num_classes: int = None):
+                 num_classes: int = None,
+                 precomputed: bool = False):
         super(DetectionModel, self).__init__()
         self.save_hyperparameters(ignore=['model'])
         self.model = model
