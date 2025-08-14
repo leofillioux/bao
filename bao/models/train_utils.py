@@ -1,5 +1,22 @@
+import os
 import torch
+import lightning as L
 from easydict import EasyDict as edict
+
+def seed_everything(seed: int):
+    """
+        Seed everything for reproducibility.
+        arguments:
+            seed [int]: random seed
+        returns:
+            None
+    """
+    L.seed_everything(seed, workers=True)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    torch.use_deterministic_algorithms(True)
+    os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'
+    os.environ['PYTHONHASHSEED'] = str(seed)
 
 def dice_loss(y_hat: torch.tensor,
               y: torch.tensor) -> torch.tensor:

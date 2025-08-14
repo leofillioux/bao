@@ -8,7 +8,7 @@ def train(model: Module,
           download_dir: str = '/tmp',
           data_dir: str = default_data_dir,
           num_splits: int = 4,
-          precomputed: bool = False,
+          task_specific: dict = None,
           **kwargs) -> None:
     """Train a model on a specified dataset.
         
@@ -20,7 +20,7 @@ def train(model: Module,
             download [bool]: whether to download the dataset
             data_dir [str]: directory to save the prepared dataset to
             num_splits [int]: number of splits to create
-            precomputed [bool]: whether to precompute the dataset
+            task_specific [dict]: task specific_parameters
             kwargs: additional arguments to update the training configuration
         
         Returns:
@@ -32,18 +32,26 @@ def train(model: Module,
     import lightning as L
     from .models import get_model
     from torch.utils.data import DataLoader
-    from .train_utils import update_easydict
     from ..datasets import get_dataset
     from ..datasets import prepare_dataset
     from ..datasets import PrecomputedDataset
+    from .train_utils import update_easydict, seed_everything
     from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint
 
     updated_train_config = update_easydict(train_config, kwargs)
-    L.seed_everything(updated_train_config.seed, workers=True)
+    seed_everything(updated_train_config.seed)
 
     assert dataset_name in dataset_config, f'Dataset {dataset_name} not found in dataset_configs.yaml.'
-    
-    img_size = dataset_config[dataset_name].size
+
+    model = get_model(dataset_config[dataset_name].task)(model,
+                                                         updated_train_config.optimizer,
+                                                         updated_train_config.optimizer_params,
+                                                         dataset_config[dataset_name].num_classes,
+                                                         **task_specific)
+    img_size = getattr(model, 'img_size', dataset_config[dataset_name].size)
+    if isinstance(img_size, int):
+        img_size = (img_size, img_size)
+
     if download:
         prepare_dataset(dataset_name=dataset_name, download_dir=download_dir, data_dir=data_dir)
     train_names, val_names, test_names = get_dataset_split(dataset_name=dataset_name,
@@ -70,17 +78,11 @@ def train(model: Module,
                                download=False,
                                mode='test',
                                img_size=img_size) if test_names is not None else None
-    
-    if precomputed:
+
+    if ('precomputed' in task_specific) and (task_specific['precomputed']):
        train_dataset = PrecomputedDataset(train_dataset, model)
        val_dataset = PrecomputedDataset(val_dataset, model)
        test_dataset = PrecomputedDataset(test_dataset, model)
-
-    model = get_model(dataset_config[dataset_name].task)(model,
-                                                         updated_train_config.optimizer,
-                                                         updated_train_config.optimizer_params,
-                                                         dataset_config[dataset_name].num_classes,
-                                                         precomputed)
         
     collate_fn = getattr(model, 'collate_fn', None)
     train_dataloader = DataLoader(train_dataset,
@@ -98,12 +100,13 @@ def train(model: Module,
                                  shuffle=False,
                                  num_workers=updated_train_config.num_workers,
                                  collate_fn=collate_fn) if test_names is not None else None
-    
+
     early_stopping = EarlyStopping(monitor='val/loss',
                                    patience=updated_train_config.patience)
     model_checkpoint = ModelCheckpoint(monitor='val/loss', mode='min', save_last=False, save_top_k=1)
     callbacks = [early_stopping, model_checkpoint]
     trainer = L.Trainer(max_epochs=updated_train_config.max_epochs,
+                        default_root_dir='/lustre/fsn1/projects/rech/qrb/uel93cr/', 
                         callbacks=callbacks,
                         accelerator='cuda' if torch.cuda.is_available() else 'cpu',
                         devices=1,
@@ -112,7 +115,7 @@ def train(model: Module,
                 train_dataloader,
                 val_dataloader)
 
-    trainer.validate(model,
+    trainer.test(model,
                      test_dataloader if test_names is not None else val_dataloader,
                      ckpt_path=model_checkpoint.best_model_path)
     return trainer.callback_metrics

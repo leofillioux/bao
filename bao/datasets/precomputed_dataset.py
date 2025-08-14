@@ -12,7 +12,7 @@ class PrecomputedDataset(Dataset):
         for x, y in tqdm(self.dataset, desc='Precomputing dataset'):
             self.labels.append(y)
             with torch.no_grad():
-                feat = self.model(x.to(device).unsqueeze(0)).detach().cpu().squeeze()
+                feat = self.model.forward_pass(self.model, x.to(device).unsqueeze(0)).detach().cpu().squeeze()
             self.features.append(feat)
     
     def __len__(self):

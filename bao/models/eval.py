@@ -31,9 +31,10 @@ def eval(model: Module,
     from ..datasets import prepare_dataset
     from torch.utils.data import DataLoader
     from ..datasets import get_dataset_split
+    from .train_utils import seed_everything
     from ..configs import train_config, dataset_config
 
-    L.seed_everything(train_config.seed, workers=True)
+    seed_everything(train_config.seed)
 
     assert dataset_name in dataset_config, f'Dataset {dataset_name} not found in dataset_configs.yaml.'
 
