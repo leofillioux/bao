@@ -12,7 +12,13 @@ parser.add_argument('-m',
                     '--model',
                     type=str,
                     help='Foundation model to use for the feature extraction.',
-                    choices=['resnet', 'convnext', 'vit', 'swin', 'mae', 'vicreg', 'clip', 'dinov2'])
+                    choices=['resnet', 'convnext', 'vit', 'swin', 'mae', 'vicreg', 'clip', 'dinov2', 'core'])
+parser.add_argument('-s',
+                    '--seeds',
+                    type=int,
+                    help='Seeds across which to train the model.',
+                    nargs='+',
+                    default=[0, 1, 2, 3, 5])
 args = parser.parse_args()
 
 if args.model == 'resnet':
@@ -40,23 +46,34 @@ elif args.model == 'mae':
 elif args.model == 'vicreg':
     import torch
     model = torch.hub.load('facebookresearch/vicreg:main', 'resnet50x2')
-# elif args.model == 'clip':
-#     import transformers
-#     model = transformers.CLIPModel.from_pretrained(model_path).vision_model
+elif args.model == 'clip':
+    from transformers import CLIPModel
+    model = CLIPModel.from_pretrained('openai/clip-vit-base-patch16').vision_model
 elif args.model == 'dinov2':
     import torch
     model = torch.hub.load('facebookresearch/dinov2', 'dinov2_vitb14')
+elif args.model == 'core':
+    import torch
+    model = torch.hub.load('leofillioux/core', 'core_base')
 else:
     raise NotImplementedError
 
+if args.model == 'clip':
+    def forward(model, x):
+        return model(x).pooler_output
+else:
+    def forward(model, x):
+        return model(x)
+model.forward_pass = forward
+
 all_metrics = []
-for seed in range(5):
+for seed in args.seeds:
     for split in range(4):
         metrics = bao.train(copy(model),
                             args.dataset,
                             split=split,
                             download=False,
-                            precomputed=True,
+                            task_specific={'precomputed': True},
                             seed=seed,
                             batch_size=64,
                             max_epochs=10000,
