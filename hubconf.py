@@ -12,6 +12,3 @@ def core_base(pretrained: bool = True):
         checkpoint = torch.load(hf_hub_download('leoflx/core', 'core_base.pth'))
         core.load_state_dict(checkpoint)
     return core
-
-model = core_base()
-print(model)
