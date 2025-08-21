@@ -18,7 +18,7 @@ parser.add_argument('-s',
                     type=int,
                     help='Seeds across which to train the model.',
                     nargs='+',
-                    default=[0, 1, 2, 3, 5])
+                    default=list(range(5)))
 args = parser.parse_args()
 
 if args.model == 'resnet':
