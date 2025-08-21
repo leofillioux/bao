@@ -10,8 +10,8 @@ def train(model: Module,
           num_splits: int = 4,
           task_specific: dict = None,
           **kwargs) -> None:
-    """Train a model on a specified dataset.
-        
+    """
+        Train a model on a specified dataset.
         Args:
             model [torch.nn.Module | L.LightningModule]: model to train
             dataset_name [str]: name of the dataset to train on
@@ -83,7 +83,7 @@ def train(model: Module,
        train_dataset = PrecomputedDataset(train_dataset, model)
        val_dataset = PrecomputedDataset(val_dataset, model)
        test_dataset = PrecomputedDataset(test_dataset, model)
-        
+
     collate_fn = getattr(model, 'collate_fn', None)
     train_dataloader = DataLoader(train_dataset,
                                   batch_size=updated_train_config.batch_size,

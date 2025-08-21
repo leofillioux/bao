@@ -142,7 +142,6 @@ class SegmentationModel(L.LightningModule):
         self.prediction_head.mask_norm = nn.Identity()
         self._optimizer_name = optimizer_name
         self._optimizer_params = optimizer_params
-        # self.boundaries = get_boundaries(img_size, num_patches, num_overlap)
         self.boundaries, self.img_size = get_boundaries(num_patches, 30)
         self.loss = train_utils.dice_loss
         self.metric = train_utils.dice_metric
@@ -246,7 +245,6 @@ class DetectionModel(L.LightningModule):
                                                     num_decoder_heads,
                                                     num_decoder_layers,
                                                     num_classes)
-        # self.boundaries = get_boundaries(img_size, num_patches, num_overlap)
         self.boundaries, self.img_size = get_boundaries(num_patches, 30)
         self.metric = torchmetrics.detection.MeanAveragePrecision(iou_type='bbox')
         self._optimizer_name = optimizer_name
@@ -307,15 +305,6 @@ class DetectionModel(L.LightningModule):
                         lab_patch.append({'boxes': (lab['boxes'][valid_indices].cpu().float()*self.img_size-torch.tensor([start_y, start_x, start_y, start_x]))/224, 'labels': torch.ones_like(lab['labels'][valid_indices].cpu())})
                     else:
                         lab_patch.append({'boxes': (lab['boxes'][valid_indices].cpu().float()*self.img_size-torch.tensor([start_y, start_x, start_y, start_x]))/224, 'labels': lab['labels'][valid_indices].cpu()})
-                
-                # import matplotlib.pyplot as plt
-                # plt.imshow(x_patch[0, 0].cpu(), cmap='gray')
-                # plt.axis('off')
-                # for box in lab_patch[0]['boxes']:
-                #     start_x_, start_y_, end_x_, end_y_ = box*224
-                #     plt.plot([start_x_, start_x_, end_x_, end_x_, start_x_], [start_y_, end_y_, end_y_, start_y_, start_y_], c='g')
-                # plt.savefig(f'label_{start_x}_{end_x}_{start_y}_{end_y}.png', bbox_inches='tight')
-                # plt.close()
                 
                 y_hat_patch = self(x_patch)
                 y_hat_patch = {key: value.cpu() for key, value in y_hat_patch.items()}
