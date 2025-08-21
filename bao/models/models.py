@@ -102,6 +102,15 @@ class ClassificationModel(L.LightningModule):
         self.log('val/metric_auc', metric_auc, on_epoch=True, on_step=False, prog_bar=True)
         return super().on_validation_epoch_end()
 
+    def on_test_epoch_start(self):
+        return self.on_validation_epoch_start()
+
+    def on_test_epoch_end(self):
+        return self.on_validation_epoch_end()
+
+    def test_step(self, batch, batch_idx):
+        return self.validation_step(batch, batch_idx)
+
     def validation_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)

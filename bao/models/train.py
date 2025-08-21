@@ -43,11 +43,6 @@ def train(model: Module,
 
     assert dataset_name in dataset_config, f'Dataset {dataset_name} not found in dataset_configs.yaml.'
 
-    model = get_model(dataset_config[dataset_name].task)(model,
-                                                         updated_train_config.optimizer,
-                                                         updated_train_config.optimizer_params,
-                                                         dataset_config[dataset_name].num_classes,
-                                                         **task_specific)
     img_size = getattr(model, 'img_size', dataset_config[dataset_name].size)
     if isinstance(img_size, int):
         img_size = (img_size, img_size)
@@ -100,6 +95,12 @@ def train(model: Module,
                                  shuffle=False,
                                  num_workers=updated_train_config.num_workers,
                                  collate_fn=collate_fn) if test_names is not None else None
+
+    model = get_model(dataset_config[dataset_name].task)(model,
+                                                         updated_train_config.optimizer,
+                                                         updated_train_config.optimizer_params,
+                                                         dataset_config[dataset_name].num_classes,
+                                                         **task_specific)
 
     early_stopping = EarlyStopping(monitor='val/loss',
                                    patience=updated_train_config.patience)
