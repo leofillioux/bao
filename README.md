@@ -19,6 +19,14 @@ If you want to add new datasets, new tasks, ... you can clone the dataset and in
 pip install -e .
 ```
 
+## Acess to CORE
+We release the CORE foundation model which can easily be accessed.
+```python
+import torch
+
+core = torch.hub.load('leofillioux/bao', 'core_base')
+```
+
 ## Usage
 The `bao.datasets` subpackage gives access to an interface to download and prepare datasets, as well as dataset classes.
 ```python
