@@ -48,7 +48,6 @@ class ClassificationModel(L.LightningModule):
                  precomputed: bool = False):
         super(ClassificationModel, self).__init__()
         self.save_hyperparameters(ignore=['model'])
-        self.model = model
         self._optimizer_name = optimizer_name
         self._optimizer_params = optimizer_params
 
@@ -56,12 +55,12 @@ class ClassificationModel(L.LightningModule):
         if num_classes == 2:
             self.metric_f1 = torchmetrics.F1Score(task='binary')
             self.metric_auc = torchmetrics.AUROC(task='binary')
-            self.foundation = None if precomputed else self.model
+            self.foundation = None if precomputed else model
             self.model = nn.Sequential(nn.LazyLinear(1), nn.Sigmoid())
         else:
             self.metric_f1 = torchmetrics.F1Score(task='multiclass', num_classes=num_classes)
             self.metric_auc = torchmetrics.AUROC(task='multiclass', num_classes=num_classes)
-            self.foundation = None if precomputed else self.model
+            self.foundation = None if precomputed else model
             self.model = nn.Sequential(nn.LazyLinear(num_classes), nn.Softmax(dim=1))
 
     def on_train_epoch_start(self):

@@ -1,7 +1,7 @@
 from torch.nn import Module
 from ..configs import default_data_dir
 
-def train(model: Module,
+def train(foundation: Module,
           dataset_name: str,
           split: int,
           download: bool,
@@ -13,7 +13,7 @@ def train(model: Module,
     """
         Train a model on a specified dataset.
         Args:
-            model [torch.nn.Module | L.LightningModule]: model to train
+            foundation [torch.nn.Module | L.LightningModule]: model to use for the feature extraction
             dataset_name [str]: name of the dataset to train on
             split [int]: index of the split to train on
             download_dir [str]: directory to download the dataset to
@@ -42,6 +42,12 @@ def train(model: Module,
     seed_everything(updated_train_config.seed)
 
     assert dataset_name in dataset_config, f'Dataset {dataset_name} not found in dataset_configs.yaml.'
+
+    model = get_model(dataset_config[dataset_name].task)(foundation,
+                                                         updated_train_config.optimizer,
+                                                         updated_train_config.optimizer_params,
+                                                         dataset_config[dataset_name].num_classes,
+                                                         **task_specific)
 
     img_size = getattr(model, 'img_size', dataset_config[dataset_name].size)
     if isinstance(img_size, int):
@@ -75,9 +81,9 @@ def train(model: Module,
                                img_size=img_size) if test_names is not None else None
 
     if ('precomputed' in task_specific) and (task_specific['precomputed']):
-       train_dataset = PrecomputedDataset(train_dataset, model)
-       val_dataset = PrecomputedDataset(val_dataset, model)
-       test_dataset = PrecomputedDataset(test_dataset, model)
+       train_dataset = PrecomputedDataset(train_dataset, foundation)
+       val_dataset = PrecomputedDataset(val_dataset, foundation)
+       test_dataset = PrecomputedDataset(test_dataset, foundation)
 
     collate_fn = getattr(model, 'collate_fn', None)
     train_dataloader = DataLoader(train_dataset,
@@ -95,12 +101,6 @@ def train(model: Module,
                                  shuffle=False,
                                  num_workers=updated_train_config.num_workers,
                                  collate_fn=collate_fn) if test_names is not None else None
-
-    model = get_model(dataset_config[dataset_name].task)(model,
-                                                         updated_train_config.optimizer,
-                                                         updated_train_config.optimizer_params,
-                                                         dataset_config[dataset_name].num_classes,
-                                                         **task_specific)
 
     early_stopping = EarlyStopping(monitor='val/loss',
                                    patience=updated_train_config.patience)
